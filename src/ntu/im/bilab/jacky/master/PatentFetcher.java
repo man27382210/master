@@ -1,7 +1,6 @@
 package ntu.im.bilab.jacky.master;
 
 import java.io.*;
-import java.net.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,13 +23,8 @@ public class PatentFetcher {
 
 	// id list of relative patents
 	List<String> patent_id = new ArrayList<String>();
-
-	public static void main(String[] args) {
-		PatentFetcher pf = new PatentFetcher();
-		pf.execute();
-		
-	}
 	
+	// run fetch process
 	public void execute(){
 	
 		String query = fetchQueryString();
@@ -48,19 +42,13 @@ public class PatentFetcher {
 			}
 		}
 		
-		OpenNLPTester opennlp = new OpenNLPTester();
-		SAOExtractor saoe = new SAOExtractor();
-		for (String id : patent_id) {
-			Document patent = fetchPatentDocumentById(id);
-			patents.add(patent);
-			System.out.println("Load patent : " + id);
-			String[] sentences = opennlp.getSentence(patent.text());
-			for (String s : sentences) {
-				saoe.getSAOTriple(opennlp, s);
-			}
-		}
-		
 	}
+	
+	// get all queried patents' id
+	public List<String> getPatentIdList(){
+		return patent_id;
+	}
+	
 
 	// get relative patents' id
 	private void fetchRelativePatentId() {
