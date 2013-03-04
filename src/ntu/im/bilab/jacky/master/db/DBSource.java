@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.db;
+package ntu.im.bilab.jacky.master.db;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

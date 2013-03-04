@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.List;
 
 
-import ntu.im.bilab.jacky.db.DBSource;
+import ntu.im.bilab.jacky.master.db.DBSource;
 import ntu.im.bilab.jacky.master.tools.IssueYearFinder;
 
 
