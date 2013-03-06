@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -20,25 +21,37 @@ public class MainController {
 			IssueYearFinder iyf = new IssueYearFinder();
 			PatentFetcher pf = new PatentFetcher();
 			pf.execute();
-			List<String> patent_id_list = pf.getPatentIdList();
+			List<Patent> patents = pf.getPatentList();
 	    DBSource db = new DBSource();
 	    Connection conn = db.getConnection();
 	    Statement stmt = conn.createStatement();
 	    
-	    for (String patent_id : patent_id_list) {
+	    for (Patent p : patents) {
+	    	String patent_id = p.getPatentId();
 	    	String year = iyf.getIssueYear(patent_id);
-	    	String sql = "select claims from uspto_" + year + " where patent_id = '" + patent_id + "'";
-	    	stmt.executeQuery(sql);
+	    	p.setYear(year);
+	    	String sql = "select abstract from uspto_" + year + " where patent_id = '" + patent_id + "'";
+	    	//System.out.println(sql);
+	    	ResultSet rs = stmt.executeQuery(sql);
+	    	while (rs.next()) {
+	    		String abstracts = rs.getString("Abstract");
+	    		p.setAbstracts(abstracts);
+	    		//System.out.println(claims);
+	    	}
 	    }
 	    
 	    db.closeConnection(conn);
 	    
-	    
-	    
-	    
-	    
-	    
-	    
+	    for (Patent p : patents) {
+	    	String abstracts = p.getAbstracts();
+	    	List<String> sentences = Arrays.asList(OpenNLP.getSentence(abstracts));
+	    	for (String sentence : sentences){
+	    		List<SAOTuple> sao_list = SAOExtractor.getSAOTuple(sentence);
+	    		if(sao_list != null) p.getSAOList().addAll(sao_list);
+	    	}
+	    	p.toString();
+	    }
+	   
 	    
 	    
     } catch (FileNotFoundException e) {
