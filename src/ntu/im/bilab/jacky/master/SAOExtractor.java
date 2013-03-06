@@ -15,21 +15,30 @@ import opennlp.tools.util.InvalidFormatException;
 
 public class SAOExtractor {
 	private Parse predicate_in_vp = null;
-
-	protected static List<SAOTuple> getSAOTuple(String sentence)
-	    throws InvalidFormatException, IOException {
-		Parse root = OpenNLP.getParse(sentence);
-		List<Parse> clauses = getClauses(root);
+	
+	
+	
+	
+	
+	protected static List<SAOTuple> getSAOTuple(String data)
+			throws InvalidFormatException, IOException {
 		List<SAOTuple> sao_list = new ArrayList<SAOTuple>();
+		List<String> sentences = Arrays.asList(OpenNLP.getSentence(data));
+		
+		for (String sentence : sentences) {
+			Parse root = OpenNLP.getParse(sentence);
+			List<Parse> clauses = getClauses(root);	
 
-		for (Parse clause : clauses) {
-			Parse subject = getSubject(clause);
-			Parse predicate = getPredicate(clause);
-			Parse object = getObject(clause, predicate);
-			if (subject == null || object == null || predicate == null)
-				continue;
-			sao_list.add(new SAOTuple(clause.toString(), subject.toString(), predicate
-			    .toString(), object.toString()));
+			for (Parse clause : clauses) {
+				Parse subject = getSubject(clause);
+				Parse predicate = getPredicate(clause);
+				Parse object = getObject(clause, predicate);
+				if (subject == null || object == null || predicate == null)
+					continue;
+				sao_list.add(new SAOTuple(clause.toString(),
+						subject.toString(), predicate.toString(), object
+								.toString()));
+			}
 		}
 
 		return sao_list;
@@ -72,7 +81,7 @@ public class SAOExtractor {
 		}
 		return list;
 	}
-
+	
 	private static Parse getSubject(Parse tree) {
 		Queue<Parse> queue = new LinkedList<Parse>();
 		queue.add(tree);
@@ -80,14 +89,17 @@ public class SAOExtractor {
 		while (!queue.isEmpty()) {
 			Parse p = queue.poll();
 			List<Parse> list = getChildrenByType(p, "NP");
-			if (p.getType().equals("NP") && list.isEmpty())
-				return p;
+			if (p.getType().equals("NP") && list.isEmpty()) {
+				String[] types = { "NN", "NNP", "NNPS", "NNS" };
+				List<Parse> children = getChildrenByType((p), types);
+				return children.get(children.size()-1);
+			}
 			for (Parse child : list)
 				queue.add(child);
 		}
 		return null;
 	}
-
+	
 	private static Parse getPredicate(Parse tree) {
 		Queue<Parse> queue = new LinkedList<Parse>();
 		queue.add(tree);
@@ -126,7 +138,9 @@ public class SAOExtractor {
 			return null;
 		String[] types = { "NP", "PP", "ADJP" };
 		for (Parse p : getSiblingByType(predicate, types)) {
-			return p;
+			String[] other_types = { "NN", "NNP", "NNPS", "NNS" };
+			List<Parse> children = getChildrenByType((p), other_types);
+			return children.get(children.size()-1);
 		}
 		return null;
 	}
@@ -140,7 +154,7 @@ public class SAOExtractor {
 			Parse p = q.poll();
 			String type = p.getType();
 			if (type.equals("NN") || type.equals("NNP") || type.equals("NNPS")
-			    || type.equals("NNS"))
+					|| type.equals("NNS"))
 				return p.toString();
 			else {
 				for (Parse subtree : p.getChildren()) {
@@ -177,8 +191,9 @@ public class SAOExtractor {
 			String type = p.getType();
 
 			if (value > deepestVPDepth) {
-				if (type.equals("VB") || type.equals("VBD") || type.equals("VBG")
-				    || type.equals("VBN") || type.equals("VBP") || type.equals("VBZ")) {
+				if (type.equals("VB") || type.equals("VBD")
+						|| type.equals("VBG") || type.equals("VBN")
+						|| type.equals("VBP") || type.equals("VBZ")) {
 					deepestVP = p;
 					deepestVPDepth = value;
 				}
@@ -208,7 +223,7 @@ public class SAOExtractor {
 					Parse p = q.poll();
 					String s = p.getType();
 					if (s.equals("NN") || s.equals("NNP") || s.equals("NNPS")
-					    || s.equals("NNS")) {
+							|| s.equals("NNS")) {
 						return p.toString();
 					} else {
 						for (Parse subtree : p.getChildren()) {

@@ -10,7 +10,7 @@ public class Patent {
 	String abstracts;
 	String claims;
 	List<SAOTuple> sao_list = new ArrayList<SAOTuple>();
-	
+
 	public String getPatentId() {
 		return patent_id;
 	}
@@ -43,12 +43,6 @@ public class Patent {
 		this.abstracts = abstracts;
 	}
 
-	@Override
-  public String toString() {
-	  return "Patent [patent_id=" + patent_id + ", year=" + year + ", abstracts="
-	      + abstracts + ", claims=" + claims + ", sao_list=" + sao_list + "]";
-  }
-
 	public List<SAOTuple> getSAOList() {
 		return sao_list;
 	}
@@ -56,5 +50,12 @@ public class Patent {
 	public void setSAOList(List<SAOTuple> sao_list) {
 		this.sao_list = sao_list;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Patent [patent_id=" + patent_id + ", year=" + year
+				+ ", abstracts=" + abstracts + ", claims=" + claims
+				+ ", sao_list=" + sao_list + "]";
+	}
+
 }
