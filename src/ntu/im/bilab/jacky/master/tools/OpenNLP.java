@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master;
+package ntu.im.bilab.jacky.master.tools;
 
 import java.io.FileInputStream;
 import java.io.IOException;

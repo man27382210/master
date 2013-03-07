@@ -1,7 +1,10 @@
-package ntu.im.bilab.jacky.master;
+package ntu.im.bilab.jacky.master.test;
 
 import java.io.*;
 import java.util.List;
+
+import ntu.im.bilab.jacky.master.tools.SAOExtractor;
+import ntu.im.bilab.jacky.master.tools.SAOTuple;
 
 import opennlp.tools.*;
 import opennlp.tools.cmdline.parser.ParserTool;

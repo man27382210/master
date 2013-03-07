@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master;
+package ntu.im.bilab.jacky.master.patent;
 
 import java.io.*;
 import java.util.ArrayList;

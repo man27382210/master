@@ -10,7 +10,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import ntu.im.bilab.jacky.master.db.DBSource;
+import ntu.im.bilab.jacky.master.patent.Patent;
+import ntu.im.bilab.jacky.master.patent.PatentFetcher;
 import ntu.im.bilab.jacky.master.tools.IssueYearFinder;
+import ntu.im.bilab.jacky.master.tools.SAOExtractor;
 
 public class MainController {
 

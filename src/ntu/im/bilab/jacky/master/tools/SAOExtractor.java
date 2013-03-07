@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master;
+package ntu.im.bilab.jacky.master.tools;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import opennlp.tools.util.InvalidFormatException;
 public class SAOExtractor {
 	private Parse predicate_in_vp = null;
 
-	protected static List<SAOTuple> getSAOTuple(String data)
+	public static List<SAOTuple> getSAOTuple(String data)
 	    throws InvalidFormatException, IOException {
 		List<SAOTuple> sao_list = new ArrayList<SAOTuple>();
 		List<String> sentences = Arrays.asList(OpenNLP.getSentence(data));
