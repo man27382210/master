@@ -52,10 +52,9 @@ public class Patent {
 	}
 
 	@Override
-	public String toString() {
-		return "Patent [patent_id=" + patent_id + ", year=" + year
-				+ ", abstracts=" + abstracts + ", claims=" + claims
-				+ ", sao_list=" + sao_list + "]";
-	}
+  public String toString() {
+	  return "Patent [patent_id=" + patent_id + ", year=" + year + ", abstracts="
+	      + abstracts + ", claims=" + claims + ", sao_list=" + sao_list + "]";
+  }
 
 }

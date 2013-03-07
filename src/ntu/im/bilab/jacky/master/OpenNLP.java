@@ -26,7 +26,7 @@ public class OpenNLP {
 	    IOException {
 		String sentences[] = null;
 		InputStream modelIn = null;
-		modelIn = new FileInputStream("en-sent.bin");
+		modelIn = new FileInputStream("opennlp/en-sent.bin");
 		SentenceModel model = new SentenceModel(modelIn);
 		SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
 		sentences = sentenceDetector.sentDetect(data);
@@ -39,7 +39,7 @@ public class OpenNLP {
 	    IOException {
 		String[] tokens = null;
 		InputStream modelIn = null;
-		modelIn = new FileInputStream("en-token.bin");
+		modelIn = new FileInputStream("opennlp/en-token.bin");
 		TokenizerModel model = new TokenizerModel(modelIn);
 		Tokenizer tokenizer = new TokenizerME(model);
 		tokens = tokenizer.tokenize(sentence);
@@ -52,7 +52,7 @@ public class OpenNLP {
 	    IOException {
 		InputStream modelIn = null;
 		String[] tags = null;
-		modelIn = new FileInputStream("en-pos-maxent.bin");
+		modelIn = new FileInputStream("opennlp/en-pos-maxent.bin");
 		POSModel model = new POSModel(modelIn);
 		POSTaggerME tagger = new POSTaggerME(model);
 		tags = tagger.tag(sent);
@@ -65,7 +65,7 @@ public class OpenNLP {
 	    throws InvalidFormatException, IOException {
 		InputStream modelIn = null;
 		String[] tag = null;
-		modelIn = new FileInputStream("en-chunker.bin");
+		modelIn = new FileInputStream("opennlp/en-chunker.bin");
 		ChunkerModel model = new ChunkerModel(modelIn);
 		ChunkerME chunker = new ChunkerME(model);
 		tag = chunker.chunk(sent, pos);
@@ -78,7 +78,7 @@ public class OpenNLP {
 	    IOException {
 		InputStream modelIn = null;
 		Parse parse = null;
-		modelIn = new FileInputStream("en-parser-chunking.bin");
+		modelIn = new FileInputStream("opennlp/en-parser-chunking.bin");
 		ParserModel model = new ParserModel(modelIn);
 		Parser parser = ParserFactory.create(model);
 		Parse topParses[] = ParserTool.parseLine(sentence, parser, 1);
