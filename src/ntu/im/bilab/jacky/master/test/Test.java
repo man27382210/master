@@ -3,8 +3,8 @@ package ntu.im.bilab.jacky.master.test;
 import java.io.*;
 import java.util.List;
 
-import ntu.im.bilab.jacky.master.tools.SAOExtractor;
-import ntu.im.bilab.jacky.master.tools.SAOTuple;
+import ntu.im.bilab.jacky.master.patent.SAOExtractor;
+import ntu.im.bilab.jacky.master.patent.SAOTuple;
 
 import opennlp.tools.*;
 import opennlp.tools.cmdline.parser.ParserTool;

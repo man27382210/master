@@ -3,7 +3,6 @@ package ntu.im.bilab.jacky.master.patent;
 import java.util.ArrayList;
 import java.util.List;
 
-import ntu.im.bilab.jacky.master.tools.SAOTuple;
 
 public class Patent {
 
@@ -53,10 +52,11 @@ public class Patent {
 		this.sao_list = sao_list;
 	}
 
-	@Override
-  public String toString() {
-	  return "Patent [patent_id=" + patent_id + ", year=" + year + ", abstracts="
-	      + abstracts + ", claims=" + claims + ", sao_list=" + sao_list + "]";
+  public void show() {
+  	System.out.println("ID : " + patent_id);
+  	for(SAOTuple sao : sao_list) {
+  		System.out.println(sao.toString());
+  	}
   }
 
 }

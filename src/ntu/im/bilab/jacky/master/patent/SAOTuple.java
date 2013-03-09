@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.tools;
+package ntu.im.bilab.jacky.master.patent;
 
 public class SAOTuple {
 	String clause;
@@ -15,7 +15,7 @@ public class SAOTuple {
 
 	@Override
   public String toString() {
-	  return "SAOTuple [clause=" + clause + ", subject=" + subject
-	      + ", predicate=" + predicate + ", object=" + object + "]";
+	  return "SAOTuple [S=" + subject
+	      + ", A=" + predicate + ", O=" + object + "]";
   }
 }

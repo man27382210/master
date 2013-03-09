@@ -1,9 +1,16 @@
 package ntu.im.bilab.jacky.master.patent;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import ntu.im.bilab.jacky.master.db.DBSource;
+import ntu.im.bilab.jacky.master.tools.IssueYearFinder;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,12 +31,40 @@ public class PatentFetcher {
 	// Patent List
 	List<Patent> patents = new ArrayList<Patent>();
 
-	// run fetch process
-	public void execute() {
+	// fetch information from database
+	private void fetchRelativePatentByDB() throws FileNotFoundException,
+	    IOException, ClassNotFoundException, SQLException {
+		IssueYearFinder iyf = new IssueYearFinder();
+		DBSource db = new DBSource();
+		Connection conn = db.getConnection();
+		Statement stmt = conn.createStatement();
+		patents = patents.subList(0, 1);
 
+		for (Patent p : patents) {
+			String patent_id = p.getPatentId();
+			String year = iyf.getIssueYear(patent_id);
+			p.setYear(year);
+			String sql = "select abstract from uspto_" + year
+			    + " where patent_id = '" + patent_id + "'";
+			// System.out.println(sql);
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				String abstracts = rs.getString("Abstract");
+				abstracts = abstracts.substring(abstracts.indexOf("Abstract") + 9);
+				// System.out.println(abstracts);
+				p.setAbstracts(abstracts);
+				// System.out.println(claims);
+			}
+		}
+
+		db.closeConnection(conn);
+	}
+
+	// fetch relative patent by quering USPTO 
+	private void fetchRelativePatentByUSPTO() {
 		String query = fetchQueryString();
 		System.out.println("Query : " + query);
-		fetchQueryResult(query, 1);
+		fetchQueryResultByUSPTO(query, 1);
 		countOfRelativePatents();
 		System.out.println("Relative Patents : " + count_of_relative_patents);
 		fetchRelativePatentId();
@@ -37,14 +72,17 @@ public class PatentFetcher {
 		int page = (int) (count_of_relative_patents / 50) + 1;
 		if (page > 1) {
 			for (int i = 2; i < page + 1; i++) {
-				fetchQueryResult(query, page);
+				fetchQueryResultByUSPTO(query, page);
 				fetchRelativePatentId();
 			}
 		}
 	}
 
-	// get all patent
-	public List<Patent> getPatentList() {
+	// fetch and get all patent
+	public List<Patent> getPatentList() throws FileNotFoundException,
+	    IOException, ClassNotFoundException, SQLException {
+		fetchRelativePatentByUSPTO();
+		fetchRelativePatentByDB();
 		return patents;
 	}
 
@@ -58,7 +96,7 @@ public class PatentFetcher {
 		while (i.hasNext()) {
 			Element e = i.next();
 			String id = e.getElementsByTag("td").get(1).text();
-			id = id.replaceAll(",","");
+			id = id.replaceAll(",", "");
 			Patent p = new Patent();
 			p.setPatentId(id);
 			patents.add(p);
@@ -67,7 +105,7 @@ public class PatentFetcher {
 	}
 
 	// get patent query from uspto advance search
-	private void fetchQueryResult(String query, int page) {
+	private void fetchQueryResultByUSPTO(String query, int page) {
 
 		// replace all char for URL conversion
 		query = query.replaceAll(" ", "%20");

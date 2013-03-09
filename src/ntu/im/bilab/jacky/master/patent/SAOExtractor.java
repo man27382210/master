@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.tools;
+package ntu.im.bilab.jacky.master.patent;
 
 import java.io.IOException;
 import java.util.ArrayList;
