@@ -136,11 +136,14 @@ public class SAOExtractor {
 				String[] child_type = { "NN", "NNP", "NNPS", "NNS" };
 				List<Parse> children = getChildrenByType((p), child_type);
 				if (!children.isEmpty()) {
+					System.out.println(1);
 					return children.get(children.size() - 1);
 				} else {
+					System.out.println(2);
 					return p;
 				}
 			} else {
+				System.out.println(3);
 				return p;
 			}
 		}
