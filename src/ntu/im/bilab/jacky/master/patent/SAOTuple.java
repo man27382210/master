@@ -5,7 +5,7 @@ public class SAOTuple {
 	String subject;
 	String predicate;
 	String object;
-
+	
 	public SAOTuple(String clause, String subject, String predicate, String object) {
 		this.clause = clause;
 		this.subject = subject;

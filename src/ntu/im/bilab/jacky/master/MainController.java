@@ -22,13 +22,16 @@ public class MainController {
 			// fetch all patent by query from USPTO and DB
 			PatentFetcher pf = new PatentFetcher();
 			List<Patent> patents = pf.getPatentList();
+			
 			System.out.println("Fetching content of patent done!");
 
+			SAOExtractor saoe = new SAOExtractor();
 			for (Patent p : patents) {
 				String abstracts = p.getAbstracts();
 				//System.out.println(p.getPatentId());
 				//System.out.println(abstracts);
-				p.setSAOList(SAOExtractor.getSAOTuple(abstracts));
+				
+				p.setSAOList(saoe.getSAOTupleList(abstracts));
 				p.show();
 			}
 

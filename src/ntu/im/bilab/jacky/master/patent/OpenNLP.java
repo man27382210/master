@@ -24,26 +24,33 @@ import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.util.InvalidFormatException;
 
 public class OpenNLP {
+	private static OpenNLP instance = null;
 	private static SentenceModel sentenceModel;
 	private static SentenceDetectorME sentenceDetector;
 	private static ParserModel parserModel;
 	private static Parser parser;
+	
+	// singleton pattern
+	public static OpenNLP getInstance() throws InvalidFormatException, IOException {
+		if(OpenNLP.instance == null) {
+			InputStream modelIn = null;
 
-	public OpenNLP() throws InvalidFormatException, IOException {
-		InputStream modelIn = null;
+			modelIn = new FileInputStream("opennlp/en-sent.bin");
+			sentenceModel = new SentenceModel(modelIn);
+			sentenceDetector = new SentenceDetectorME(sentenceModel);
 
-		modelIn = new FileInputStream("opennlp/en-sent.bin");
-		sentenceModel = new SentenceModel(modelIn);
-		sentenceDetector = new SentenceDetectorME(sentenceModel);
-
-		modelIn = new FileInputStream("opennlp/en-parser-chunking.bin");
-
-		parserModel = new ParserModel(modelIn);
-		parser = (Parser) ParserFactory.create(parserModel, 5, Parser.defaultAdvancePercentage);
-		if (modelIn != null)
-			modelIn.close();
+			modelIn = new FileInputStream("opennlp/en-parser-chunking.bin");
+			parserModel = new ParserModel(modelIn);
+			//parser = (Parser) ParserFactory.create(parserModel, 10, Parser.defaultAdvancePercentage);
+			parser = (Parser) ParserFactory.create(parserModel);
+			
+			if (modelIn != null) modelIn.close();
+			
+			OpenNLP.instance = new OpenNLP();
+		}
+		return OpenNLP.instance;
 	}
-
+	
 	protected List<String> getSentence(String data)
 	    throws InvalidFormatException, IOException {
 		return Arrays.asList(sentenceDetector.sentDetect(data));

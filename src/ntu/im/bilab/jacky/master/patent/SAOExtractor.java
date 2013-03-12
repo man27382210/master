@@ -11,47 +11,49 @@ import opennlp.tools.parser.Parse;
 import opennlp.tools.util.InvalidFormatException;
 
 public class SAOExtractor {
-	public static boolean passive_voice = false;
-
-	public static List<SAOTuple> getSAOTuple(String data)
-	    throws InvalidFormatException, IOException {
-		OpenNLP opennlp = new OpenNLP();
-		List<SAOTuple> sao_list = new ArrayList<SAOTuple>();
+	public List<SAOTuple> getSAOTupleList(String data)
+			throws InvalidFormatException, IOException {
+		OpenNLP opennlp = OpenNLP.getInstance();
+		List<SAOTuple> saoTupleList = new ArrayList<SAOTuple>();
 		List<String> sentences = opennlp.getSentence(data);
-		
 
 		for (String sentence : sentences) {
-			Parse root = opennlp.getParse(sentence);
-			List<Parse> clauses = getClauses(root);
-
+			Parse parse = opennlp.getParse(sentence);
+			List<Parse> clauses = getClauses(parse);
 			for (Parse clause : clauses) {
-				Parse subject = getSubject(clause);
-				Parse predicate = getPredicate(clause);
-				Parse object = getObject(clause, predicate);
-				checkPassiveVoice(subject, object);
-				if (subject == null || object == null || predicate == null)
-					continue;
-				sao_list.add(new SAOTuple(clause.toString(), subject.toString(),
-				    predicate.toString(), object.toString()));
+				clause.show();
+				System.out.println(clause.getHead().toString());
+				System.out.println(clause.toString());
+				System.out.println(clause.toString());
+				SAOTuple tuple = getSAOTuple(clause);
+				if (tuple != null)
+					saoTupleList.add(tuple);
 			}
 		}
-
-		return sao_list;
+		return saoTupleList;
 	}
 
-	public String getSubject(String sentence) throws InvalidFormatException, IOException {
-		OpenNLP opennlp = new OpenNLP();
-		Parse root = opennlp.getParse(sentence);
-		return getSubject(root).toString();
+	public SAOTuple getSAOTuple(Parse clause) {
+		Parse subject = getSubject(clause);
+		if (subject == null)
+			return null;
+		Parse predicate = getPredicate(clause);
+		if (predicate == null)
+			return null;
+		Parse object = getObject(clause, predicate);
+		if (object == null)
+			return null;
+		checkPassiveVoice(predicate, subject, object);
+		return new SAOTuple(clause.toString(), subject.toString(),
+				predicate.toString(), object.toString());
 	}
 
-	private static void checkPassiveVoice(Parse subject, Parse object) {
-		if (passive_voice == true) {
+	private void checkPassiveVoice(Parse predicate, Parse subject, Parse object) {
+		if (predicate.getType().equals("VBN")) {
 			Parse tmp = null;
 			tmp = subject;
 			subject = object;
 			object = tmp;
-			passive_voice = false;
 		}
 	}
 
@@ -92,9 +94,23 @@ public class SAOExtractor {
 		return list;
 	}
 
-	private static Parse getSubject(Parse tree) {
+	public String getSubject(String sentence) throws InvalidFormatException,
+			IOException {
+		OpenNLP opennlp = OpenNLP.getInstance();
+		Parse parse = opennlp.getParse(sentence);
+		List<Parse> clauses = getClauses(parse);
+		SAOTuple tuple = getSAOTuple(clauses.get(0));
+		if (tuple != null) {
+			return tuple.getSubject();
+		} else {
+			return null;
+		}
+	}
+
+	// find the subject from parse
+	private static Parse getSubject(Parse parse) {
 		Queue<Parse> queue = new LinkedList<Parse>();
-		queue.add(tree);
+		queue.add(parse);
 
 		while (!queue.isEmpty()) {
 			Parse p = queue.poll();
@@ -102,12 +118,29 @@ public class SAOExtractor {
 			if (p.getType().equals("NP") && list.isEmpty()) {
 				String[] types = { "NN", "NNP", "NNPS", "NNS" };
 				List<Parse> children = getChildrenByType((p), types);
-				return children.get(children.size() - 1);
+				if (!children.isEmpty()) {
+					return children.get(children.size() - 1);
+				} else {
+					return null;
+				}
 			}
 			for (Parse child : list)
 				queue.add(child);
 		}
 		return null;
+	}
+
+	public String getPredicate(String sentence) throws InvalidFormatException,
+			IOException {
+		OpenNLP opennlp = OpenNLP.getInstance();
+		Parse parse = opennlp.getParse(sentence);
+		List<Parse> clauses = getClauses(parse);
+		SAOTuple tuple = getSAOTuple(clauses.get(0));
+		if (tuple != null) {
+			return tuple.getPredicate();
+		} else {
+			return null;
+		}
 	}
 
 	private static Parse getPredicate(Parse tree) {
@@ -119,10 +152,7 @@ public class SAOExtractor {
 			List<Parse> list = getChildrenByType((p), "VP");
 			if (p.getType().equals("VP") && list.isEmpty()) {
 				String[] types = { "VB", "VBD", "VBG", "VBN", "VBP", "VBZ" };
-				Parse child = getChildrenByType(p, types).get(0);
-				if (child.getType().equals("VBN"))
-					passive_voice = true;
-				return child;
+				return getChildrenByType(p, types).get(0);
 			}
 			for (Parse child : list)
 				queue.add(child);
@@ -130,8 +160,20 @@ public class SAOExtractor {
 		return null;
 	}
 
+	public String getObject(String sentence) throws InvalidFormatException,
+			IOException {
+		OpenNLP opennlp = OpenNLP.getInstance();
+		Parse parse = opennlp.getParse(sentence);
+		List<Parse> clauses = getClauses(parse);
+		SAOTuple tuple = getSAOTuple(clauses.get(0));
+		if (tuple != null) {
+			return tuple.getObject();
+		} else {
+			return null;
+		}
+	}
+
 	private static Parse getObject(Parse tree, Parse predicate) {
-		// Parse predicate = getPredicate(tree);
 		if (predicate == null)
 			return null;
 		String[] types = { "NP", "PP", "S" };
@@ -142,10 +184,10 @@ public class SAOExtractor {
 				if (!children.isEmpty()) {
 					return children.get(children.size() - 1);
 				} else {
-					return getSubject(p);
+					return null;
 				}
 			} else {
-				return getSubject(p);
+				return null;
 			}
 		}
 		return null;
