@@ -18,6 +18,7 @@ public class SAOExtractor {
 		OpenNLP opennlp = new OpenNLP();
 		List<SAOTuple> sao_list = new ArrayList<SAOTuple>();
 		List<String> sentences = opennlp.getSentence(data);
+		
 
 		for (String sentence : sentences) {
 			Parse root = opennlp.getParse(sentence);
