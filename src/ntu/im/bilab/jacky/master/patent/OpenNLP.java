@@ -3,14 +3,17 @@ package ntu.im.bilab.jacky.master.patent;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
 import opennlp.tools.cmdline.parser.ParserTool;
+
 import opennlp.tools.parser.Parse;
-import opennlp.tools.parser.Parser;
 import opennlp.tools.parser.ParserFactory;
 import opennlp.tools.parser.ParserModel;
+import opennlp.tools.parser.chunking.Parser;
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.sentdetect.SentenceDetectorME;
@@ -21,21 +24,38 @@ import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.util.InvalidFormatException;
 
 public class OpenNLP {
+	private static SentenceModel sentenceModel;
+	private static SentenceDetectorME sentenceDetector;
+	private static ParserModel parserModel;
+	private static Parser parser;
 
-	protected static String[] getSentence(String data) throws InvalidFormatException,
-	    IOException {
-		String sentences[] = null;
+	public OpenNLP() throws InvalidFormatException, IOException {
 		InputStream modelIn = null;
+
 		modelIn = new FileInputStream("opennlp/en-sent.bin");
-		SentenceModel model = new SentenceModel(modelIn);
-		SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
-		sentences = sentenceDetector.sentDetect(data);
+		sentenceModel = new SentenceModel(modelIn);
+		sentenceDetector = new SentenceDetectorME(sentenceModel);
+
+		modelIn = new FileInputStream("opennlp/en-parser-chunking.bin");
+
+		parserModel = new ParserModel(modelIn);
+		parser = (Parser) ParserFactory.create(parserModel, 5, Parser.defaultAdvancePercentage);
 		if (modelIn != null)
 			modelIn.close();
-		return sentences;
 	}
 
-	protected static String[] getToken(String sentence) throws InvalidFormatException,
+	protected List<String> getSentence(String data)
+	    throws InvalidFormatException, IOException {
+		return Arrays.asList(sentenceDetector.sentDetect(data));
+	}
+
+	protected Parse getParse(String sentence) throws InvalidFormatException,
+	    IOException {
+		Parse topParses[] = ParserTool.parseLine(sentence, parser, 1);
+		return topParses[0];
+	}
+
+	protected String[] getToken(String sentence) throws InvalidFormatException,
 	    IOException {
 		String[] tokens = null;
 		InputStream modelIn = null;
@@ -48,7 +68,7 @@ public class OpenNLP {
 		return tokens;
 	}
 
-	protected static String[] getPOSTag(String[] sent) throws InvalidFormatException,
+	protected String[] getPOSTag(String[] sent) throws InvalidFormatException,
 	    IOException {
 		InputStream modelIn = null;
 		String[] tags = null;
@@ -61,7 +81,7 @@ public class OpenNLP {
 		return tags;
 	}
 
-	protected static String[] getChunkTag(String[] sent, String[] pos)
+	protected String[] getChunkTag(String[] sent, String[] pos)
 	    throws InvalidFormatException, IOException {
 		InputStream modelIn = null;
 		String[] tag = null;
@@ -72,20 +92,6 @@ public class OpenNLP {
 		if (modelIn != null)
 			modelIn.close();
 		return tag;
-	}
-
-	protected static Parse getParse(String sentence) throws InvalidFormatException,
-	    IOException {
-		InputStream modelIn = null;
-		Parse parse = null;
-		modelIn = new FileInputStream("opennlp/en-parser-chunking.bin");
-		ParserModel model = new ParserModel(modelIn);
-		Parser parser = ParserFactory.create(model);
-		Parse topParses[] = ParserTool.parseLine(sentence, parser, 1);
-		parse = topParses[0];
-		if (modelIn != null)
-			modelIn.close();
-		return parse;
 	}
 
 }

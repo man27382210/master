@@ -3,31 +3,31 @@ package ntu.im.bilab.jacky.master.patent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 import opennlp.tools.parser.Parse;
 import opennlp.tools.util.InvalidFormatException;
 
 public class SAOExtractor {
-	private Parse predicate_in_vp = null;
+	public static boolean passive_voice = false;
 
 	public static List<SAOTuple> getSAOTuple(String data)
 	    throws InvalidFormatException, IOException {
+		OpenNLP opennlp = new OpenNLP();
 		List<SAOTuple> sao_list = new ArrayList<SAOTuple>();
-		List<String> sentences = Arrays.asList(OpenNLP.getSentence(data));
+		List<String> sentences = opennlp.getSentence(data);
 
 		for (String sentence : sentences) {
-			Parse root = OpenNLP.getParse(sentence);
+			Parse root = opennlp.getParse(sentence);
 			List<Parse> clauses = getClauses(root);
 
 			for (Parse clause : clauses) {
 				Parse subject = getSubject(clause);
 				Parse predicate = getPredicate(clause);
 				Parse object = getObject(clause, predicate);
+				checkPassiveVoice(subject, object);
 				if (subject == null || object == null || predicate == null)
 					continue;
 				sao_list.add(new SAOTuple(clause.toString(), subject.toString(),
@@ -36,6 +36,22 @@ public class SAOExtractor {
 		}
 
 		return sao_list;
+	}
+
+	public String getSubject(String sentence) throws InvalidFormatException, IOException {
+		OpenNLP opennlp = new OpenNLP();
+		Parse root = opennlp.getParse(sentence);
+		return getSubject(root).toString();
+	}
+
+	private static void checkPassiveVoice(Parse subject, Parse object) {
+		if (passive_voice == true) {
+			Parse tmp = null;
+			tmp = subject;
+			subject = object;
+			object = tmp;
+			passive_voice = false;
+		}
 	}
 
 	private static List<Parse> getClauses(Parse tree) {
@@ -53,7 +69,6 @@ public class SAOExtractor {
 		return clauses;
 	}
 
-	@SuppressWarnings("unused")
 	private static List<Parse> getChildrenByType(Parse tree, String[] types) {
 		List<Parse> list = new ArrayList<Parse>();
 		for (Parse subtree : tree.getChildren()) {
@@ -103,10 +118,34 @@ public class SAOExtractor {
 			List<Parse> list = getChildrenByType((p), "VP");
 			if (p.getType().equals("VP") && list.isEmpty()) {
 				String[] types = { "VB", "VBD", "VBG", "VBN", "VBP", "VBZ" };
-				return getChildrenByType((p), types).get(0);
+				Parse child = getChildrenByType(p, types).get(0);
+				if (child.getType().equals("VBN"))
+					passive_voice = true;
+				return child;
 			}
 			for (Parse child : list)
 				queue.add(child);
+		}
+		return null;
+	}
+
+	private static Parse getObject(Parse tree, Parse predicate) {
+		// Parse predicate = getPredicate(tree);
+		if (predicate == null)
+			return null;
+		String[] types = { "NP", "PP", "S" };
+		for (Parse p : getSiblingByType(predicate, types)) {
+			if (p.getType().equals("NP") || p.getType().equals("PP")) {
+				String[] child_type = { "NN", "NNP", "NNPS", "NNS" };
+				List<Parse> children = getChildrenByType((p), child_type);
+				if (!children.isEmpty()) {
+					return children.get(children.size() - 1);
+				} else {
+					return getSubject(p);
+				}
+			} else {
+				return getSubject(p);
+			}
 		}
 		return null;
 	}
@@ -125,119 +164,4 @@ public class SAOExtractor {
 		}
 		return list;
 	}
-
-	private static Parse getObject(Parse tree, Parse predicate) {
-		// Parse predicate = getPredicate(tree);
-		if (predicate == null)
-			return null;
-		String[] types = { "NP", "PP", "ADJP", "S" };
-		for (Parse p : getSiblingByType(predicate, types)) {
-			if (p.getType().equals("NP") || p.getType().equals("PP")) {
-				String[] child_type = { "NN", "NNP", "NNPS", "NNS" };
-				List<Parse> children = getChildrenByType((p), child_type);
-				if (!children.isEmpty()) {
-					System.out.println(1);
-					return children.get(children.size() - 1);
-				} else {
-					System.out.println(2);
-					return p;
-				}
-			} else {
-				System.out.println(3);
-				return p;
-			}
-		}
-		return null;
-	}
-
-	@SuppressWarnings("unused")
-	private String Old_getSubject(Parse tree) {
-		Queue<Parse> q = new LinkedList<Parse>();
-		q.add(tree);
-
-		while (q.isEmpty() == false) {
-			Parse p = q.poll();
-			String type = p.getType();
-			if (type.equals("NN") || type.equals("NNP") || type.equals("NNPS")
-			    || type.equals("NNS"))
-				return p.toString();
-			else {
-				for (Parse subtree : p.getChildren()) {
-					q.add(subtree);
-				}
-			}
-		}
-
-		return null;
-	}
-
-	@SuppressWarnings("unused")
-	private String Old_getPredicate(Parse tree) {
-		Queue<Parse> q = new LinkedList<Parse>();
-		Map<Parse, Integer> map = new HashMap<Parse, Integer>();
-
-		int depth = 0;
-		q.add(tree);
-		map.put(tree, depth);
-
-		while (q.isEmpty() == false) {
-			Parse p = q.poll();
-			for (Parse subtree : p.getChildren()) {
-				q.add(subtree);
-				map.put(subtree, map.get(subtree.getParent()) + 1);
-			}
-		}
-
-		Parse deepestVP = null;
-		int deepestVPDepth = 0;
-
-		for (Parse p : map.keySet()) {
-			int value = map.get(p);
-			String type = p.getType();
-
-			if (value > deepestVPDepth) {
-				if (type.equals("VB") || type.equals("VBD") || type.equals("VBG")
-				    || type.equals("VBN") || type.equals("VBP") || type.equals("VBZ")) {
-					deepestVP = p;
-					deepestVPDepth = value;
-				}
-			}
-		}
-
-		if (deepestVP != null) {
-			predicate_in_vp = deepestVP.getParent();
-			return deepestVP.toString();
-		} else {
-			return null;
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private String Old_getObject(Parse tree) {
-		Parse[] siblings = predicate_in_vp.getChildren();
-		for (Parse sibling : siblings) {
-			String type = sibling.getType();
-			if (type.equals("VP")) {
-				continue;
-			} else if (type.equals("NP") || type.equals("PP")) {
-				Queue<Parse> q = new LinkedList<Parse>();
-				q.add(sibling);
-
-				while (q.isEmpty() == false) {
-					Parse p = q.poll();
-					String s = p.getType();
-					if (s.equals("NN") || s.equals("NNP") || s.equals("NNPS")
-					    || s.equals("NNS")) {
-						return p.toString();
-					} else {
-						for (Parse subtree : p.getChildren()) {
-							q.add(subtree);
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-
 }
