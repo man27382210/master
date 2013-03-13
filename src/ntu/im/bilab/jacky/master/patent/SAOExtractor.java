@@ -1,8 +1,10 @@
 package ntu.im.bilab.jacky.master.patent;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -12,25 +14,74 @@ import opennlp.tools.util.InvalidFormatException;
 
 public class SAOExtractor {
 	public List<SAOTuple> getSAOTupleList(String data)
-			throws InvalidFormatException, IOException {
+	    throws InvalidFormatException, IOException {
 		OpenNLP opennlp = OpenNLP.getInstance();
 		List<SAOTuple> saoTupleList = new ArrayList<SAOTuple>();
 		List<String> sentences = opennlp.getSentence(data);
 
 		for (String sentence : sentences) {
-			Parse parse = opennlp.getParse(sentence);
-			List<Parse> clauses = getClauses(parse);
-			for (Parse clause : clauses) {
-				clause.show();
-				System.out.println(clause.getHead().toString());
-				System.out.println(clause.toString());
-				System.out.println(clause.toString());
-				SAOTuple tuple = getSAOTuple(clause);
-				if (tuple != null)
-					saoTupleList.add(tuple);
+			List<Parse> parseList = opennlp.getParseList(sentence);
+			for (Parse parse : parseList) {
+				List<Parse> clauses = getClauses(parse);
+				for (Parse clause : clauses) {
+					clause.show();
+					System.out.println(clause.toString());
+					// pennString(clause);
+					SAOTuple tuple = getSAOTuple(clause);
+					if (tuple != null)
+						saoTupleList.add(tuple);
+				}
 			}
 		}
 		return saoTupleList;
+	}
+
+	public void pennString(Parse parse) {
+		StringBuffer sb = new StringBuffer(parse.toString().length() * 4);
+		StringBuffer space = new StringBuffer(parse.toString().length() * 4);
+		System.out.print(pennString(parse, sb, space));
+	}
+
+	private StringBuffer pennString(Parse parse, StringBuffer sb,
+	    StringBuffer space) {
+		String types[] = { "NP", "VP", "ADVP", "PP" };
+		List<String> typeList = Arrays.asList(types);
+		if (!getChildrenByType(parse, "TK").isEmpty()) {
+			sb.append("(");
+			sb.append(parse.getType());
+			sb.append(" ");
+			sb.append(parse.toString());
+			sb.append(")");
+			if (parse.getParent().indexOf(parse) != parse.getParent().getChildCount() - 1)
+				sb.append(" ");
+		} else if (parse.getType().equals("S")) {
+			sb.append("\n");
+			sb.append(space);
+			sb.append("(");
+			sb.append(parse.getType());
+			space.append("  ");
+			sb.append(space);
+			for (Parse child : Arrays.asList(parse.getChildren())) {
+				pennString(child, sb, space);
+			}
+		} else if (typeList.contains(parse.getType())) {
+			if (typeList.contains(parse.getParent().getType())) {
+				space.append("  ");
+			}
+			sb.append("\n");
+			sb.append(space);
+			sb.append("(");
+			sb.append(parse.getType());
+			sb.append(" ");
+
+			for (Parse child : Arrays.asList(parse.getChildren())) {
+				pennString(child, sb, space);
+			}
+			sb.append(")");
+		} else {
+
+		}
+		return sb;
 	}
 
 	public SAOTuple getSAOTuple(Parse clause) {
@@ -45,7 +96,7 @@ public class SAOExtractor {
 			return null;
 		checkPassiveVoice(predicate, subject, object);
 		return new SAOTuple(clause.toString(), subject.toString(),
-				predicate.toString(), object.toString());
+		    predicate.toString(), object.toString());
 	}
 
 	private void checkPassiveVoice(Parse predicate, Parse subject, Parse object) {
@@ -95,7 +146,7 @@ public class SAOExtractor {
 	}
 
 	public String getSubject(String sentence) throws InvalidFormatException,
-			IOException {
+	    IOException {
 		OpenNLP opennlp = OpenNLP.getInstance();
 		Parse parse = opennlp.getParse(sentence);
 		List<Parse> clauses = getClauses(parse);
@@ -131,7 +182,7 @@ public class SAOExtractor {
 	}
 
 	public String getPredicate(String sentence) throws InvalidFormatException,
-			IOException {
+	    IOException {
 		OpenNLP opennlp = OpenNLP.getInstance();
 		Parse parse = opennlp.getParse(sentence);
 		List<Parse> clauses = getClauses(parse);
@@ -161,7 +212,7 @@ public class SAOExtractor {
 	}
 
 	public String getObject(String sentence) throws InvalidFormatException,
-			IOException {
+	    IOException {
 		OpenNLP opennlp = OpenNLP.getInstance();
 		Parse parse = opennlp.getParse(sentence);
 		List<Parse> clauses = getClauses(parse);

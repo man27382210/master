@@ -13,7 +13,7 @@ import opennlp.tools.cmdline.parser.ParserTool;
 import opennlp.tools.parser.Parse;
 import opennlp.tools.parser.ParserFactory;
 import opennlp.tools.parser.ParserModel;
-import opennlp.tools.parser.chunking.Parser;
+import opennlp.tools.parser.Parser;
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.sentdetect.SentenceDetectorME;
@@ -29,10 +29,11 @@ public class OpenNLP {
 	private static SentenceDetectorME sentenceDetector;
 	private static ParserModel parserModel;
 	private static Parser parser;
-	
+
 	// singleton pattern
-	public static OpenNLP getInstance() throws InvalidFormatException, IOException {
-		if(OpenNLP.instance == null) {
+	public static OpenNLP getInstance() throws InvalidFormatException,
+	    IOException {
+		if (OpenNLP.instance == null) {
 			InputStream modelIn = null;
 
 			modelIn = new FileInputStream("opennlp/en-sent.bin");
@@ -41,16 +42,18 @@ public class OpenNLP {
 
 			modelIn = new FileInputStream("opennlp/en-parser-chunking.bin");
 			parserModel = new ParserModel(modelIn);
-			//parser = (Parser) ParserFactory.create(parserModel, 10, Parser.defaultAdvancePercentage);
-			parser = (Parser) ParserFactory.create(parserModel);
-			
-			if (modelIn != null) modelIn.close();
-			
+			// parser = (Parser) ParserFactory.create(parserModel, 10,
+			// Parser.defaultAdvancePercentage);
+			parser = ParserFactory.create(parserModel);
+
+			if (modelIn != null)
+				modelIn.close();
+
 			OpenNLP.instance = new OpenNLP();
 		}
 		return OpenNLP.instance;
 	}
-	
+
 	protected List<String> getSentence(String data)
 	    throws InvalidFormatException, IOException {
 		return Arrays.asList(sentenceDetector.sentDetect(data));
@@ -60,6 +63,13 @@ public class OpenNLP {
 	    IOException {
 		Parse topParses[] = ParserTool.parseLine(sentence, parser, 1);
 		return topParses[0];
+	}
+
+	protected List<Parse> getParseList(String sentence) throws InvalidFormatException,
+	    IOException {
+		Parse topParses[] = ParserTool.parseLine(sentence, parser, 10);
+		System.out.println(topParses.length);
+		return Arrays.asList(topParses);
 	}
 
 	protected String[] getToken(String sentence) throws InvalidFormatException,
