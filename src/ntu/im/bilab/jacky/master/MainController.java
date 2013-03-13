@@ -12,7 +12,7 @@ import java.util.List;
 import ntu.im.bilab.jacky.master.db.DBSource;
 import ntu.im.bilab.jacky.master.patent.Patent;
 import ntu.im.bilab.jacky.master.patent.PatentFetcher;
-import ntu.im.bilab.jacky.master.patent.SAOExtractor;
+import ntu.im.bilab.jacky.master.patent.SAOExtractorByOpenNLP;
 import ntu.im.bilab.jacky.master.tools.IssueYearFinder;
 
 public class MainController {
@@ -25,7 +25,7 @@ public class MainController {
 			
 			System.out.println("Fetching content of patent done!");
 
-			SAOExtractor saoe = new SAOExtractor();
+			SAOExtractorByOpenNLP saoe = new SAOExtractorByOpenNLP();
 			for (Patent p : patents) {
 				String abstracts = p.getAbstracts();
 				//System.out.println(p.getPatentId());

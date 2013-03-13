@@ -12,7 +12,7 @@ import java.util.Queue;
 import opennlp.tools.parser.Parse;
 import opennlp.tools.util.InvalidFormatException;
 
-public class SAOExtractor {
+public class SAOExtractorByOpenNLP {
 	public List<SAOTuple> getSAOTupleList(String data)
 	    throws InvalidFormatException, IOException {
 		OpenNLP opennlp = OpenNLP.getInstance();
