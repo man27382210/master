@@ -2,6 +2,8 @@ package ntu.im.bilab.jacky.master.test;
 
 import static org.junit.Assert.assertEquals;
 import java.io.IOException;
+
+import ntu.im.bilab.jacky.master.patent.SAOExtractor;
 import ntu.im.bilab.jacky.master.patent.SAOExtractorByOpenNLP;
 import opennlp.tools.util.InvalidFormatException;
 import org.junit.After;
@@ -9,11 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class SAOExtractorTest {
-	private SAOExtractorByOpenNLP extractor;
+	private SAOExtractor extractor;
 
 	@Before
 	public void setUp() {
-		extractor = new SAOExtractorByOpenNLP();
+		extractor = new SAOExtractor();
 	}
 
 	@After

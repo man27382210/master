@@ -40,11 +40,9 @@ public class OpenNLP {
 			sentenceModel = new SentenceModel(modelIn);
 			sentenceDetector = new SentenceDetectorME(sentenceModel);
 
-			modelIn = new FileInputStream("opennlp/en-parser-chunking.bin");
-			parserModel = new ParserModel(modelIn);
-			// parser = (Parser) ParserFactory.create(parserModel, 10,
-			// Parser.defaultAdvancePercentage);
-			parser = ParserFactory.create(parserModel);
+			//modelIn = new FileInputStream("opennlp/en-parser-chunking.bin");
+			//parserModel = new ParserModel(modelIn);
+			//parser = ParserFactory.create(parserModel);
 
 			if (modelIn != null)
 				modelIn.close();
