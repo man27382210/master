@@ -10,8 +10,8 @@
 	<classpathentry kind="lib" path="lib/edu.mit.jwi_2.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-snowball-3.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/edu.sussex.nlp.jws.beta.11.jar"/>
-	<classpathentry kind="lib" path="lib/stanford-parser-2.0.4-models.jar"/>
-	<classpathentry kind="lib" path="lib/stanford-parser.jar" sourcepath="stanford-parser/stanford-parser-2.0.4-sources.jar"/>
+	<classpathentry kind="lib" path="stanford-parser/stanford-parser-2.0.4-models.jar"/>
+	<classpathentry kind="lib" path="stanford-parser/stanford-parser.jar" sourcepath="stanford-parser/stanford-parser-2.0.4-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
