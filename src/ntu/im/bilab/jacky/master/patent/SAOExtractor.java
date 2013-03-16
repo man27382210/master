@@ -46,6 +46,8 @@ public class SAOExtractor {
 		Reader reader = new StringReader(paragraph);
 		DocumentPreprocessor dp = new DocumentPreprocessor(reader);
 		for (List<HasWord> list : dp) {
+			if (list.size() > 30 ) continue;
+			//System.out.println("size = " + list.size());
 			sentList.add(list.toString());
 		}
 
