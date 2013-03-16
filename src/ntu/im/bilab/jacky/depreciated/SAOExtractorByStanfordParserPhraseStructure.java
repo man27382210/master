@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.patent;
+package ntu.im.bilab.jacky.depreciated;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,8 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import ntu.im.bilab.jacky.master.patent.SAOTuple;
+import ntu.im.bilab.jacky.master.patent.StanfordParser;
 import opennlp.tools.util.InvalidFormatException;
-
 import edu.stanford.nlp.trees.Tree;
 
 public class SAOExtractorByStanfordParserPhraseStructure {

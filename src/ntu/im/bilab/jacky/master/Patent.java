@@ -3,20 +3,23 @@ package ntu.im.bilab.jacky.master;
 import java.util.ArrayList;
 import java.util.List;
 
+import ntu.im.bilab.jacky.master.patent.SAOTuple;
+
 public class Patent {
 
-	String patent_id;
+	String id;
 	String year;
 	String abstracts;
 	String claims;
-	List<SAOTuple> sao_list = new ArrayList<SAOTuple>();
+	String description;
+	List<SAOTuple> saoTupleList = new ArrayList<SAOTuple>();
 
-	public String getPatentId() {
-		return patent_id;
+	public String getId() {
+		return id;
 	}
 
-	public void setPatentId(String patent_id) {
-		this.patent_id = patent_id;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getYear() {
@@ -43,19 +46,25 @@ public class Patent {
 		this.abstracts = abstracts;
 	}
 
-	public List<SAOTuple> getSAOList() {
-		return sao_list;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setSAOList(List<SAOTuple> sao_list) {
-		this.sao_list = sao_list;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public List<SAOTuple> getSaoTupleList() {
+		return saoTupleList;
+	}
+
+	public void setSaoTupleList(List<SAOTuple> saoTupleList) {
+		this.saoTupleList = saoTupleList;
 	}
 
 	@Override
-	public String toString() {
-		return "Patent [patent_id=" + patent_id + ", year=" + year
-				+ ", abstracts=" + abstracts + ", claims=" + claims
-				+ ", sao_list=" + sao_list + "]";
-	}
+  public String toString() {
+	  return "Patent [id=" + id + ", saoTupleList=" + saoTupleList + "]";
+  }
 
 }

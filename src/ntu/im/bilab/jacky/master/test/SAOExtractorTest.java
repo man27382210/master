@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 
 import ntu.im.bilab.jacky.master.patent.SAOExtractor;
-import ntu.im.bilab.jacky.master.patent.SAOExtractorByOpenNLP;
 import opennlp.tools.util.InvalidFormatException;
 import org.junit.After;
 import org.junit.Before;

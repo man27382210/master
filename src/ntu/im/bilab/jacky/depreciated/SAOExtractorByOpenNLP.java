@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.patent;
+package ntu.im.bilab.jacky.depreciated;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -8,6 +8,8 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import ntu.im.bilab.jacky.master.patent.SAOTuple;
 
 import opennlp.tools.parser.Parse;
 import opennlp.tools.util.InvalidFormatException;

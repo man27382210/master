@@ -1,6 +1,8 @@
 package ntu.im.bilab.jacky.master.patent;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -10,7 +12,9 @@ import java.util.Set;
 
 import opennlp.tools.util.InvalidFormatException;
 
+import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.Label;
+import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.trees.Dependency;
 import edu.stanford.nlp.trees.GrammaticalStructure;
 import edu.stanford.nlp.trees.GrammaticalStructureFactory;
@@ -29,19 +33,42 @@ public class SAOExtractor {
 	public SAOExtractor() {
 		parser = StanfordParser.getInstance();
 		gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
-		subjectTd = Arrays
-				.asList(new String[] { "nsubj", "nsubjpass", "xsubj" });
-		objectTd = Arrays.asList(new String[] { "dobj", "iobject", "pobj",
-				"prep", "prep_in" });
+		subjectTd = Arrays.asList(new String[] { "nsubj", "nsubjpass", "xsubj" });
+		objectTd = Arrays
+		    .asList(new String[] { "dobj", "iobject", "pobj", "prep" });
+	}
+
+	public List<SAOTuple> getSAO(String paragraph) {
+		List<String> sentList = new ArrayList<String>();
+		List<SAOTuple> tupleList = new ArrayList<SAOTuple>();
+		
+		// convert data into splited sentence
+		Reader reader = new StringReader(paragraph);
+		DocumentPreprocessor dp = new DocumentPreprocessor(reader);
+		for (List<HasWord> list : dp) {
+			sentList.add(list.toString());
+		}
+
+		System.out.println("Found sentences : " + sentList.size());
+		
+		// add tuple list
+		for (String sent : sentList) {
+			System.out.println("Extract sentence : " + sentList.indexOf(sent) + " of " + sentList.size());
+			tupleList.addAll(getSAOTupleList(sent));
+		}
+		
+		System.out.println("Found SAO tuple : " + tupleList.size());
+		return tupleList;
 	}
 
 	public List<SAOTuple> getSAOTupleList(String sent) {
 		List<SAOTuple> tupleList = new ArrayList<SAOTuple>();
 		Tree parse = parser.parse(sent);
 		List<TypedDependency> tdl = gsf.newGrammaticalStructure(parse)
-				.typedDependenciesCCprocessed();
+		    .typedDependenciesCCprocessed();
 
 		for (TypedDependency td : tdl) {
+			//System.out.println(td.toString());
 			// get subject
 			if (subjectTd.contains(getName(td))) {
 				TreeGraphNode subject = td.dep();
@@ -55,9 +82,8 @@ public class SAOExtractor {
 
 						if (predicate.equals(predicate2)) {
 
-							SAOTuple tuple = new SAOTuple("sent",
-									subject.nodeString(),
-									predicate.nodeString(), object.nodeString());
+							SAOTuple tuple = new SAOTuple("sent", subject.nodeString(),
+							    predicate.nodeString(), object.nodeString());
 							tupleList.add(tuple);
 						}
 					}
@@ -89,7 +115,6 @@ public class SAOExtractor {
 		Tree parse = parser.parse(sent);
 		GrammaticalStructure gs = gsf.newGrammaticalStructure(parse);
 		List<TypedDependency> tdl = gs.typedDependenciesCCprocessed();
-		System.out.println(tdl.toString());
 		for (TypedDependency td : tdl) {
 			if (objectTd.contains(getName(td)))
 				if (!list.contains(getDep(td)))
@@ -113,15 +138,9 @@ public class SAOExtractor {
 
 	public static void main(String[] args) {
 		String s = "Bell, a company which is based in LA, makes and distributes computer products.";
-		s = "A temporary indicated torque is obtained by taking a conventional dead " +
-				"zone area for a first slip control area, and the value proportional to the " +
-				"slip quantity for a maximum value, this temporary indicated torque is corrected " +
-				"by a correction value according to the tight cornering brake quantity to be the " +
-				"indicated torque of the transfer clutch, and occurrence of any tight cornering" +
-				" brake phenomenon is prevented thereby. In a slip control area after passing a dead zone area (a second slip control area), the slip control is smoothly transferred from the first slip control area to the second slip control area by performing the slip control with a value of the indicated torque according to the slip quantity added to the indicated torque in the first slip control area as the indicated torque, abrupt torque change is prevented, and the vehicle behavior is stabilized thereby.";
-		s = "In a slip control area after passing a dead zone area (a second slip control area), the slip control is smoothly transferred from the first slip control area to the second slip control area by performing the slip control with a value of the indicated torque according to the slip quantity added to the indicated torque in the first slip control area as the indicated torque, abrupt torque change is prevented, and the vehicle behavior is stabilized thereby.";
+		s = "My dog and cat who likes sausage and suger.";
+
 		SAOExtractor saoe = new SAOExtractor();
-		
 		System.out.println(saoe.getSAOTupleList(s));
 	}
 }

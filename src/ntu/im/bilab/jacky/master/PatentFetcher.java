@@ -60,7 +60,7 @@ public class PatentFetcher {
 			String id = e.getElementsByTag("td").get(1).text();
 			id = id.replaceAll(",","");
 			Patent p = new Patent();
-			p.setPatentId(id);
+			p.setId(id);
 			patents.add(p);
 		}
 

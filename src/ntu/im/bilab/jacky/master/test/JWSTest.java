@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+import ntu.im.bilab.jacky.master.Patent;
 import ntu.im.bilab.jacky.master.patent.JWSFetcher;
-import ntu.im.bilab.jacky.master.patent.Patent;
 import ntu.im.bilab.jacky.master.patent.SAOTuple;
 
 import edu.sussex.nlp.jws.JWS;
@@ -32,8 +32,8 @@ public class JWSTest {
 		l2.add(t4);
 		l2.add(t5);
 
-		p1.setSAOList(l1);
-		p2.setSAOList(l2);
+		p1.setSaoTupleList(l1);
+		p2.setSaoTupleList(l2);
 
 		JWSFetcher jwsf = new JWSFetcher();
 		double d = jwsf.getPatentDissimularity(p1, p2);

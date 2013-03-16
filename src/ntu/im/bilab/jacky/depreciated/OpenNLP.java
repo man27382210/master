@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.patent;
+package ntu.im.bilab.jacky.depreciated;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,7 +11,6 @@ import opennlp.tools.chunker.ChunkerModel;
 import opennlp.tools.cmdline.parser.ParserTool;
 
 import opennlp.tools.parser.Parse;
-import opennlp.tools.parser.ParserFactory;
 import opennlp.tools.parser.ParserModel;
 import opennlp.tools.parser.Parser;
 import opennlp.tools.postag.POSModel;
