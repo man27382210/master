@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -29,6 +30,7 @@ public class SAOExtractor {
 	private List<String> objectTd;
 	private StanfordParser parser;
 	private GrammaticalStructureFactory gsf;
+	private final int MAX_LENGTH_OF_SENTENCE = 30;
 
 	public SAOExtractor() {
 		parser = StanfordParser.getInstance();
@@ -41,24 +43,34 @@ public class SAOExtractor {
 	public List<SAOTuple> getSAO(String paragraph) {
 		List<String> sentList = new ArrayList<String>();
 		List<SAOTuple> tupleList = new ArrayList<SAOTuple>();
-		
+
 		// convert data into splited sentence
 		Reader reader = new StringReader(paragraph);
 		DocumentPreprocessor dp = new DocumentPreprocessor(reader);
-		for (List<HasWord> list : dp) {
-			if (list.size() > 30 ) continue;
-			//System.out.println("size = " + list.size());
-			sentList.add(list.toString());
+		Iterator<List<HasWord>> it = dp.iterator();
+		while (it.hasNext()) {
+			StringBuilder sentenceSb = new StringBuilder();
+			List<HasWord> sentence = it.next();
+			if (sentence.size() > MAX_LENGTH_OF_SENTENCE ) continue;
+			for (HasWord token : sentence) {
+				if (sentenceSb.length() > 1) {
+					sentenceSb.append(" ");
+				}
+				sentenceSb.append(token);
+			}
+			sentList.add(sentenceSb.toString());
 		}
 
 		System.out.println("Found sentences : " + sentList.size());
-		
+
 		// add tuple list
 		for (String sent : sentList) {
-			System.out.println("Extract sentence : " + sentList.indexOf(sent) + " of " + sentList.size());
+			System.out.println(sent);
+			System.out.println("Extract sentence : " + sentList.indexOf(sent)
+			    + " of " + sentList.size());
 			tupleList.addAll(getSAOTupleList(sent));
 		}
-		
+
 		System.out.println("Found SAO tuple : " + tupleList.size());
 		return tupleList;
 	}
@@ -70,7 +82,7 @@ public class SAOExtractor {
 		    .typedDependenciesCCprocessed();
 
 		for (TypedDependency td : tdl) {
-			//System.out.println(td.toString());
+			// System.out.println(td.toString());
 			// get subject
 			if (subjectTd.contains(getName(td))) {
 				TreeGraphNode subject = td.dep();
@@ -138,11 +150,12 @@ public class SAOExtractor {
 		return td.reln().getShortName();
 	}
 
-	public static void main(String[] args) {
-		String s = "Bell, a company which is based in LA, makes and distributes computer products.";
-		s = "My dog and cat who likes sausage and suger.";
-
-		SAOExtractor saoe = new SAOExtractor();
-		System.out.println(saoe.getSAOTupleList(s));
-	}
+	// public static void main(String[] args) {
+	// String s =
+	// "Bell, a company which is based in LA, makes and distributes computer products.";
+	// s = "My dog and cat who likes sausage and suger.";
+	//
+	// SAOExtractor saoe = new SAOExtractor();
+	// System.out.println(saoe.getSAOTupleList(s));
+	// }
 }
