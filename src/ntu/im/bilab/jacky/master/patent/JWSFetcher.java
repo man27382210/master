@@ -9,14 +9,23 @@ import edu.sussex.nlp.jws.JiangAndConrath;
 import edu.sussex.nlp.jws.Lin;
 
 public class JWSFetcher {
-	JWS jws;
-
+	private JWS jws;
+	private static JWSFetcher instance;
+	
+	public static JWSFetcher getInstance() {
+		if (instance == null) {
+			instance = new JWSFetcher();
+		}
+		return instance;
+	}
+	
 	public JWSFetcher() {
 		String dir = "wordnet";
 		jws = new JWS(dir, "3.0");
 	}
 
 	public double getMaxSimularity(String word1, String word2, String type) {
+		if (word1.equals(word2)) return 1;
 		Lin lin = jws.getLin();
 		return lin.max(word1, word2, type);
 	}
@@ -36,5 +45,11 @@ public class JWSFetcher {
 			}
 		}
 		return 1 - (sum / (l1.size() * l2.size()));
+	}
+	
+	public static void main(String[] args){
+		JWSFetcher f = JWSFetcher.getInstance();
+		double s1 = f.getMaxSimularity("lovey", "lovey", "n");
+		System.out.println(s1);
 	}
 }

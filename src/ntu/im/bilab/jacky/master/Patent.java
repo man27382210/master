@@ -1,9 +1,11 @@
 package ntu.im.bilab.jacky.master;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import ntu.im.bilab.jacky.master.patent.SAOTuple;
+import ntu.im.bilab.jacky.master.tools.GoogleCrawler;
 
 public class Patent {
 
@@ -14,6 +16,11 @@ public class Patent {
 	String description;
 	List<SAOTuple> saoTupleList = new ArrayList<SAOTuple>();
 
+	public static Patent getPatent(String id) throws IOException {
+		GoogleCrawler gc = GoogleCrawler.getInstance();
+		return gc.crawl(id);
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -65,6 +72,14 @@ public class Patent {
 	@Override
   public String toString() {
 	  return "Patent [id=" + id + ", saoTupleList=" + saoTupleList + "]";
+  }
+
+	public void show() {
+	  System.out.println("--- Patent info ---");
+	  System.out.println("id : " + id);
+	  for (SAOTuple t : saoTupleList) {
+	  	System.out.println(t);
+	  }
   }
 
 }

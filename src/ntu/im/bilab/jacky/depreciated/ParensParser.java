@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.tools;
+package ntu.im.bilab.jacky.depreciated;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

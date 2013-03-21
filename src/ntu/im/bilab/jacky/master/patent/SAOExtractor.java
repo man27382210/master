@@ -26,12 +26,21 @@ import edu.stanford.nlp.trees.TreebankLanguagePack;
 import edu.stanford.nlp.trees.TypedDependency;
 
 public class SAOExtractor {
+	private static SAOExtractor instance = null;
 	private List<String> subjectTd;
 	private List<String> objectTd;
 	private StanfordParser parser;
 	private GrammaticalStructureFactory gsf;
-	private final int MAX_LENGTH_OF_SENTENCE = 30;
+	private final int MAX_LENGTH_OF_SENTENCE = 10;
 
+	// singleton
+	public static SAOExtractor getInstance() {
+		if (instance == null) {
+			instance = new SAOExtractor();
+		}
+		return instance;
+	}
+	
 	public SAOExtractor() {
 		parser = StanfordParser.getInstance();
 		gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
@@ -63,10 +72,11 @@ public class SAOExtractor {
 
 		System.out.println("Found sentences : " + sentList.size());
 
+		int count = 1;
 		// add tuple list
 		for (String sent : sentList) {
-			System.out.println(sent);
-			System.out.println("Extract sentence : " + sentList.indexOf(sent)
+			//System.out.println(sent);
+			System.out.println("Extract sentence : " + count++
 			    + " of " + sentList.size());
 			tupleList.addAll(getSAOTupleList(sent));
 		}
@@ -96,8 +106,8 @@ public class SAOExtractor {
 
 						if (predicate.equals(predicate2)) {
 
-							SAOTuple tuple = new SAOTuple("sent", subject.nodeString(),
-							    predicate.nodeString(), object.nodeString());
+							SAOTuple tuple = new SAOTuple("sent", subject.nodeString().toLowerCase(),
+							    predicate.nodeString().toLowerCase(), object.nodeString().toLowerCase());
 							tupleList.add(tuple);
 						}
 					}
