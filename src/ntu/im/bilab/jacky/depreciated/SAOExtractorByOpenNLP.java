@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import ntu.im.bilab.jacky.master.patent.SAOTuple;
+import ntu.im.bilab.jacky.master.item.SAOTuple;
 
 import opennlp.tools.parser.Parse;
 import opennlp.tools.util.InvalidFormatException;

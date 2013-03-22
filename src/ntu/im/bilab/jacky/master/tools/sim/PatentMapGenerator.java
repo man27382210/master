@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.patent;
+package ntu.im.bilab.jacky.master.tools.sim;
 
 import java.awt.Color;
 import java.text.NumberFormat;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mdsj.MDSJ;
-import ntu.im.bilab.jacky.master.Patent;
+import ntu.im.bilab.jacky.master.item.Patent;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;

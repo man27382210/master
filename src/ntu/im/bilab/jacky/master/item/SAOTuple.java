@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.patent;
+package ntu.im.bilab.jacky.master.item;
 
 public class SAOTuple {
 	String clause;

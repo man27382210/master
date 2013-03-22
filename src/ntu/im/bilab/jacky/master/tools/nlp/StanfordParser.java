@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.patent;
+package ntu.im.bilab.jacky.master.tools.nlp;
 
 import java.io.StringReader;
 import java.util.List;

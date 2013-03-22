@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.test;
+package ntu.im.bilab.jacky.depreciated;
 
 import static org.junit.Assert.assertEquals;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import ntu.im.bilab.jacky.master.patent.SAOExtractor;
+import ntu.im.bilab.jacky.master.tools.nlp.SAOExtractor;
 import opennlp.tools.util.InvalidFormatException;
 import org.junit.After;
 import org.junit.Before;

@@ -1,8 +1,9 @@
-package ntu.im.bilab.jacky.master.patent;
+package ntu.im.bilab.jacky.master.tools.sim;
 
 import java.util.List;
 
-import ntu.im.bilab.jacky.master.Patent;
+import ntu.im.bilab.jacky.master.item.Patent;
+import ntu.im.bilab.jacky.master.item.SAOTuple;
 
 import edu.sussex.nlp.jws.JWS;
 import edu.sussex.nlp.jws.JiangAndConrath;

@@ -1,7 +1,7 @@
-package ntu.im.bilab.jacky.master.test;
+package ntu.im.bilab.jacky.depreciated;
 
 import static org.junit.Assert.fail;
-import ntu.im.bilab.jacky.master.patent.StanfordParser;
+import ntu.im.bilab.jacky.master.tools.nlp.StanfordParser;
 
 import org.junit.After;
 import org.junit.Before;

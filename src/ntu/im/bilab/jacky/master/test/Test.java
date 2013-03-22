@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ntu.im.bilab.jacky.master.Patent;
-import ntu.im.bilab.jacky.master.patent.PatentMapGenerator;
-import ntu.im.bilab.jacky.master.patent.SAOExtractor;
+import ntu.im.bilab.jacky.master.item.Patent;
+import ntu.im.bilab.jacky.master.tools.nlp.SAOExtractor;
+import ntu.im.bilab.jacky.master.tools.sim.PatentMapGenerator;
 
 public class Test {
 

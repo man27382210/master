@@ -1,7 +1,7 @@
-package ntu.im.bilab.jacky.master.test;
+package ntu.im.bilab.jacky.depreciated;
 
 import static org.junit.Assert.assertEquals;
-import ntu.im.bilab.jacky.master.tools.Stemmer;
+import ntu.im.bilab.jacky.master.tools.nlp.Stemmer;
 
 import org.junit.After;
 import org.junit.Before;

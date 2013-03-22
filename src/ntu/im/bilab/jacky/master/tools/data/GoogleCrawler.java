@@ -1,11 +1,11 @@
-package ntu.im.bilab.jacky.master.tools;
+package ntu.im.bilab.jacky.master.tools.data;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import ntu.im.bilab.jacky.master.Patent;
+import ntu.im.bilab.jacky.master.item.Patent;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -1,5 +1,6 @@
 package ntu.im.bilab.jacky.master;
 
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -10,11 +11,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ntu.im.bilab.jacky.master.db.DBSource;
-import ntu.im.bilab.jacky.master.patent.PatentFetcher;
-import ntu.im.bilab.jacky.master.patent.SAOExtractor;
-import ntu.im.bilab.jacky.master.tools.GoogleCrawler;
-import ntu.im.bilab.jacky.master.tools.IssueYearFinder;
+import ntu.im.bilab.jacky.master.item.Patent;
+import ntu.im.bilab.jacky.master.tools.data.DBSource;
+import ntu.im.bilab.jacky.master.tools.data.GoogleCrawler;
+import ntu.im.bilab.jacky.master.tools.data.IssueYearFinder;
+import ntu.im.bilab.jacky.master.tools.nlp.SAOExtractor;
 
 public class MainController {
 

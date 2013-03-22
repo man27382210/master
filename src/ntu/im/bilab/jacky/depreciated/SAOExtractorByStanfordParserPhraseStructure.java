@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import ntu.im.bilab.jacky.master.patent.SAOTuple;
-import ntu.im.bilab.jacky.master.patent.StanfordParser;
+import ntu.im.bilab.jacky.master.item.SAOTuple;
+import ntu.im.bilab.jacky.master.tools.nlp.StanfordParser;
 import opennlp.tools.util.InvalidFormatException;
 import edu.stanford.nlp.trees.Tree;
 

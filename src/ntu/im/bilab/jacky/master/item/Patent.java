@@ -1,11 +1,10 @@
-package ntu.im.bilab.jacky.master;
+package ntu.im.bilab.jacky.master.item;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ntu.im.bilab.jacky.master.patent.SAOTuple;
-import ntu.im.bilab.jacky.master.tools.GoogleCrawler;
+import ntu.im.bilab.jacky.master.tools.data.GoogleCrawler;
 
 public class Patent {
 

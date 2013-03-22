@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.tools;
+package ntu.im.bilab.jacky.master.tools.nlp;
 
 import org.tartarus.snowball.ext.EnglishStemmer;
 

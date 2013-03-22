@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.tools;
+package ntu.im.bilab.jacky.master.tools.data;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

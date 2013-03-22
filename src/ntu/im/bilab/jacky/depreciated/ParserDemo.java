@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.test;
+package ntu.im.bilab.jacky.depreciated;
 
 import java.util.Collection;
 import java.util.List;

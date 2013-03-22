@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.patent;
+package ntu.im.bilab.jacky.master.tools.nlp;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+
+import ntu.im.bilab.jacky.master.item.SAOTuple;
 
 import opennlp.tools.util.InvalidFormatException;
 
