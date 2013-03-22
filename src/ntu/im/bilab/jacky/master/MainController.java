@@ -23,6 +23,7 @@ public class MainController {
 			// fetch google data by id
 			List<Patent> patentList = new ArrayList<Patent>();
 			USPTOCrawler crawler = USPTOCrawler.getInstance();
+			SAOExtractor extractor = SAOExtractor.getInstance();
 			for (String id : idList) {
 				System.out.println("crawl id : " + id);
 				Patent p = new Patent();
@@ -30,13 +31,11 @@ public class MainController {
 				p.setFullText(crawler.crawlFullText(id));
 				System.out.println("crawl complete.");
 				patentList.add(p);
-				if (patentList.size() > 3) break;
-			}
 				
-			// fetch sao tuples of data
-			SAOExtractor extractor = SAOExtractor.getInstance();
-			for (Patent p : patentList) {
+				// fetch sao tuples of data
 				p.setSaoTupleList(extractor.getSAOTupleList(p.getFullText()));
+	
+				if (patentList.size() > 3) break;
 			}
 				
 			PatentMapGenerator pmg = new PatentMapGenerator();

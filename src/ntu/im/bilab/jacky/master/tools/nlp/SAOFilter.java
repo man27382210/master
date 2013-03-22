@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SAOFilter {
 	private static SAOFilter instance = null;
-	private List<String> stopWordList;
+	private List<String> stopWordList = new ArrayList<String>();
 	
 	public static SAOFilter getInstance() throws IOException{
 		if (instance == null ){
@@ -19,10 +19,18 @@ public class SAOFilter {
 		return instance;
 	}
 	
-	public boolean isStopWord(String word) {
+	private boolean isStopWord(String word) {
 		return stopWordList.contains(word);
 	}
 
+	private boolean isNumber(String word) {
+		return word.matches(".*\\d.*");
+	}
+	
+	public boolean matchFilter(String word) {
+		return (isStopWord(word) || isNumber(word));
+	}
+	
 	private void loadStopWord() throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader("doc/stopword.txt"));
 		String line = null;
