@@ -16,7 +16,6 @@ import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -25,9 +24,6 @@ public class PatentMapGenerator {
 	private List<PatentMap> map = new ArrayList<PatentMap>();
 
 	public class PatentMap {
-		private Patent p;
-		private double x;
-		private double y;
 	}
 
 	public List<PatentMap> getPatentMap(List<Patent> list) {

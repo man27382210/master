@@ -1,10 +1,7 @@
 package ntu.im.bilab.jacky.master.tools.data;
 
 import java.io.*;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,35 +27,6 @@ public class PatentFetcher {
 	// Patent List
 	List<Patent> patents = new ArrayList<Patent>();
 
-	// fetch information from database
-	private void fetchRelativePatentByDB() throws FileNotFoundException,
-	    IOException, ClassNotFoundException, SQLException {
-		IssueYearFinder iyf = new IssueYearFinder();
-		DBSource db = new DBSource();
-		Connection conn = db.getConnection();
-		Statement stmt = conn.createStatement();
-		patents = patents.subList(0, 1);
-
-		for (Patent p : patents) {
-			String id = p.getId();
-			String year = iyf.getIssueYear(id);
-			p.setYear(year);
-			String sql = "select abstract from uspto_" + year
-			    + " where patent_id = '" + id + "'";
-			// System.out.println(sql);
-			ResultSet rs = stmt.executeQuery(sql);
-			while (rs.next()) {
-				String abstracts = rs.getString("Abstract");
-				abstracts = abstracts.substring(abstracts.indexOf("Abstract") + 9);
-				// System.out.println(abstracts);
-				p.setAbstracts(abstracts);
-				// System.out.println(claims);
-			}
-		}
-
-		db.closeConnection(conn);
-	}
-
 	// fetch relative patent by quering USPTO
 	private void fetchRelativePatentByUSPTO() throws IOException {
 		String query = fetchQueryString();
@@ -81,7 +49,7 @@ public class PatentFetcher {
 	public List<Patent> getPatentList() throws FileNotFoundException,
 	    IOException, ClassNotFoundException, SQLException {
 		fetchRelativePatentByUSPTO();
-		//fetchRelativePatentByDB();
+		// fetchRelativePatentByDB();
 		return patents;
 	}
 
@@ -108,7 +76,7 @@ public class PatentFetcher {
 	    throws IOException {
 		// replace all char for URL conversion
 		query = query.replaceAll(" ", "%20");
-		
+
 		String url = "http://patft1.uspto.gov/netacgi/nph-Parser?Sect1=PTO2&Sect2=HITOFF&u=%2Fnetahtml%2FPTO%2Fsearch-adv.htm&r=0&p="
 		    + page + "&f=S&l=50&Query=" + query + "&d=PTXT";
 		query_result = Jsoup.connect(url).timeout(0).get();
@@ -141,4 +109,22 @@ public class PatentFetcher {
 		    s.indexOf("patents") - 1));
 	}
 
+	public List<String> fetchPatentByFile(String fileName) throws IOException {
+		List<String> list = new ArrayList<String>();
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		String line = null;
+		while ((line = br.readLine()) != null){
+			list.add(line);
+		}
+		br.close();
+		return list;
+	}
+	
+	public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException, SQLException {
+		PatentFetcher fetcher = new PatentFetcher();
+		List<Patent> list = fetcher.getPatentList();
+		for (Patent p : list) {
+			System.out.println(p.getId());
+		}
+	}
 }

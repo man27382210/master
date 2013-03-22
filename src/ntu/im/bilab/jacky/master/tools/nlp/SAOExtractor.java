@@ -1,30 +1,20 @@
 package ntu.im.bilab.jacky.master.tools.nlp;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.Set;
-
 import ntu.im.bilab.jacky.master.item.SAOTuple;
 
-import opennlp.tools.util.InvalidFormatException;
-
 import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.process.DocumentPreprocessor;
-import edu.stanford.nlp.trees.Dependency;
 import edu.stanford.nlp.trees.GrammaticalStructure;
 import edu.stanford.nlp.trees.GrammaticalStructureFactory;
 import edu.stanford.nlp.trees.PennTreebankLanguagePack;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeGraphNode;
-import edu.stanford.nlp.trees.TreebankLanguagePack;
 import edu.stanford.nlp.trees.TypedDependency;
 
 public class SAOExtractor {
@@ -33,7 +23,7 @@ public class SAOExtractor {
 	private List<String> objectTd;
 	private StanfordParser parser;
 	private GrammaticalStructureFactory gsf;
-	private final int MAX_LENGTH_OF_SENTENCE = 10;
+	private final int MAX_LENGTH_OF_SENTENCE = 30;
 
 	// singleton
 	public static SAOExtractor getInstance() {
@@ -51,7 +41,7 @@ public class SAOExtractor {
 		    .asList(new String[] { "dobj", "iobject", "pobj", "prep" });
 	}
 
-	public List<SAOTuple> getSAO(String paragraph) {
+	public List<SAOTuple> getSAOTupleList(String paragraph) {
 		List<String> sentList = new ArrayList<String>();
 		List<SAOTuple> tupleList = new ArrayList<SAOTuple>();
 
@@ -80,14 +70,14 @@ public class SAOExtractor {
 			//System.out.println(sent);
 			System.out.println("Extract sentence : " + count++
 			    + " of " + sentList.size());
-			tupleList.addAll(getSAOTupleList(sent));
+			tupleList.addAll(getSAOTupleListBySentence(sent));
 		}
 
 		System.out.println("Found SAO tuple : " + tupleList.size());
 		return tupleList;
 	}
 
-	public List<SAOTuple> getSAOTupleList(String sent) {
+	private List<SAOTuple> getSAOTupleListBySentence(String sent) {
 		List<SAOTuple> tupleList = new ArrayList<SAOTuple>();
 		Tree parse = parser.parse(sent);
 		List<TypedDependency> tdl = gsf.newGrammaticalStructure(parse)
@@ -152,10 +142,6 @@ public class SAOExtractor {
 
 	private String getDep(TypedDependency td) {
 		return td.dep().nodeString();
-	}
-
-	private String getGov(TypedDependency td) {
-		return td.gov().nodeString();
 	}
 
 	private String getName(TypedDependency td) {

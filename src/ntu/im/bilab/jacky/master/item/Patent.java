@@ -13,6 +13,7 @@ public class Patent {
 	String abstracts;
 	String claims;
 	String description;
+	String fullText;
 	List<SAOTuple> saoTupleList = new ArrayList<SAOTuple>();
 
 	public static Patent getPatent(String id) throws IOException {
@@ -81,4 +82,12 @@ public class Patent {
 	  }
   }
 
+	public void setFullText(String fullText) {
+	  this.fullText = fullText;
+  }
+
+	public String getFullText() {
+	  return fullText;
+  }
+	
 }

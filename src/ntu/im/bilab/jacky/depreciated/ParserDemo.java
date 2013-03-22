@@ -25,6 +25,7 @@ class ParserDemo {
     }
   }
 
+  @SuppressWarnings("rawtypes")
   public static void demoDP(LexicalizedParser lp, String filename) {
     // This option shows loading and sentence-segment and tokenizing
     // a file using DocumentPreprocessor

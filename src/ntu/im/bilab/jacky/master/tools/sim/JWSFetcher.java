@@ -6,7 +6,6 @@ import ntu.im.bilab.jacky.master.item.Patent;
 import ntu.im.bilab.jacky.master.item.SAOTuple;
 
 import edu.sussex.nlp.jws.JWS;
-import edu.sussex.nlp.jws.JiangAndConrath;
 import edu.sussex.nlp.jws.Lin;
 
 public class JWSFetcher {

@@ -1,6 +1,5 @@
 package ntu.im.bilab.jacky.depreciated;
 
-import static org.junit.Assert.fail;
 import ntu.im.bilab.jacky.master.tools.nlp.StanfordParser;
 
 import org.junit.After;

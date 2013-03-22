@@ -1,12 +1,8 @@
 package ntu.im.bilab.jacky.depreciated;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
-
 import opennlp.tools.parser.Parse;
 
 public class ParensParser {
@@ -22,7 +18,7 @@ public class ParensParser {
 	protected int buffer_start;
 
 	public String parse(String str) {
-		Deque<Parse> stack = new ArrayDeque<Parse>();
+		new ArrayDeque<Parse>();
 		
 		if(str.substring(0, 1).equals("(")){
 			str.substring(1);

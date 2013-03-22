@@ -22,11 +22,11 @@ import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.util.InvalidFormatException;
 
+@SuppressWarnings("unused")
 public class OpenNLP {
 	private static OpenNLP instance = null;
 	private static SentenceModel sentenceModel;
 	private static SentenceDetectorME sentenceDetector;
-	private static ParserModel parserModel;
 	private static Parser parser;
 
 	// singleton pattern

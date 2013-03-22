@@ -2,14 +2,9 @@ package ntu.im.bilab.jacky.depreciated;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
-
 import ntu.im.bilab.jacky.master.item.Patent;
 import ntu.im.bilab.jacky.master.item.SAOTuple;
 import ntu.im.bilab.jacky.master.tools.sim.JWSFetcher;
-
-import edu.sussex.nlp.jws.JWS;
-import edu.sussex.nlp.jws.JiangAndConrath;
 
 public class JWSTest {
 
