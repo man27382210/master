@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import ntu.im.bilab.jacky.master.item.SAOTuple;
 
 import edu.stanford.nlp.ling.HasWord;
@@ -20,7 +24,8 @@ import edu.stanford.nlp.trees.TypedDependency;
 
 public class SAOExtractor {
 	private static SAOExtractor instance = null;
-
+	private Logger logger;
+	
 	// singleton
 	public static SAOExtractor getInstance() {
 		if (instance == null) {
@@ -41,6 +46,7 @@ public class SAOExtractor {
 		gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
 		subjectTd = Arrays.asList(new String[] { "nsubj", "nsubjpass", "xsubj" });
 		objectTd = Arrays.asList(new String[] { "dobj", "iobj", "pobj", "prep" });
+		logger = Logger.getLogger(this.getClass().getSimpleName());
 	}
 
 	private String getDep(TypedDependency td) {
@@ -69,17 +75,18 @@ public class SAOExtractor {
 		List<String> sentList = splitParagraph(paragraph);
 		List<SAOTuple> tupleList = new ArrayList<SAOTuple>();
 
-		System.out.println("Found sentences : " + sentList.size());
-
-		//int count = 1;
+		//System.out.println("Found sentences : " + sentList.size());
+		logger.debug("Found sentences : " + sentList.size());
+		int count = 1;
 		// add tuple list
 		for (String sent : sentList) {
 			// System.out.println(sent);
 			//System.out.println("Extract sentence : " + count++ + " of  + sentList.size());
+			logger.debug("Extract sentence : " + count++ + " of " + sentList.size());
 			tupleList.addAll(getSAOTupleListBySentence(sent));
 		}
-
-		System.out.println("Found SAO tuple : " + tupleList.size());
+		logger.debug("Found SAO tuple : " + tupleList.size());
+		//System.out.println("Found SAO tuple : " + tupleList.size());
 		return tupleList;
 	}
 
@@ -137,6 +144,7 @@ public class SAOExtractor {
 							SAOTuple tuple = new SAOTuple("sent", subject.nodeString()
 							    .toLowerCase(), predicate.nodeString().toLowerCase(), object
 							    .nodeString().toLowerCase());
+							logger.debug(tuple.toString());
 							tupleList.add(tuple);
 						}
 					}

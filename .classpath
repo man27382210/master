@@ -23,5 +23,7 @@
 	<classpathentry kind="lib" path="jfreechart-1.0.14/lib/junit.jar"/>
 	<classpathentry kind="lib" path="jfreechart-1.0.14/lib/servlet.jar"/>
 	<classpathentry kind="lib" path="jfreechart-1.0.14/lib/swtgraphics2d.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Apache Log4j 2"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/log4j"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

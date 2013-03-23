@@ -15,7 +15,7 @@ public class JWSTest {
 		SAOTuple t1 = new SAOTuple("", "apple", "love", "apple");
 		SAOTuple t2 = new SAOTuple("", "orange", "like", "pie");
 		SAOTuple t3 = new SAOTuple("", "apple", "hate", "apple");
-		SAOTuple t4 = new SAOTuple("", "device", "draw", "apple");
+		SAOTuple t4 = new SAOTuple("", "device","draw", "apple");
 		SAOTuple t5 = new SAOTuple("", "apple", "watch", "bird");
 
 		List<SAOTuple> l1 = new ArrayList<SAOTuple>();
@@ -31,7 +31,7 @@ public class JWSTest {
 		p2.setSaoTupleList(l2);
 
 		JWSFetcher jwsf = new JWSFetcher();
-		double d = jwsf.getPatentDissimularity(p1, p2);
+		double d = jwsf.old_getPatentDissimularity(p1, p2);
 		System.out.println(d);
 	}
 }

@@ -34,7 +34,7 @@ public class PatentMapGenerator {
 		int x = 0, y = 0;
 		for (Patent p1 : list) {
 			for (Patent p2 : list) {
-				input[x][y] = fetcher.getPatentDissimularity(p1, p2);
+				input[x][y] = fetcher.getPatentDissim(p1, p2);
 				if (x == y)
 					input[x][y] = 0;
 				y++;
