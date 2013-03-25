@@ -1,4 +1,4 @@
-package ntu.im.bilab.jacky.master.tools.sim;
+package ntu.im.bilab.jacky.depreciated;
 
 import mdsj.MDSJ;
 

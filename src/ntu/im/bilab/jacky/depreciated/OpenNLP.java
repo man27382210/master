@@ -107,5 +107,4 @@ public class OpenNLP {
 			modelIn.close();
 		return tag;
 	}
-
 }

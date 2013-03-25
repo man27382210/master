@@ -34,11 +34,21 @@ public class PatentMapGenerator {
 		int x = 0, y = 0;
 		for (Patent p1 : list) {
 			for (Patent p2 : list) {
-				input[x][y] = fetcher.getPatentDissim(p1, p2);
-				System.out.println("Fetching sim between " + p1.getId() + " and " + p2.getId());
-				if (x == y)
+				if (x == y) {
 					input[x][y] = 0;
-				y++;
+					y++;
+					continue;
+				} else if (x > y) {
+					input[x][y] = input[y][x];
+					y++;
+					continue;
+				} else {
+					input[x][y] = fetcher.getPatentDissim(p1, p2);
+					System.out.println("Fetching sim between " + p1.getId() + " and "
+					    + p2.getId());
+
+					y++;
+				}
 			}
 			x++;
 			y = 0;
@@ -71,8 +81,7 @@ public class PatentMapGenerator {
 
 		NumberFormat format = NumberFormat.getNumberInstance();
 		format.setMaximumFractionDigits(2); // etc.
-		XYItemLabelGenerator generator = new StandardXYItemLabelGenerator(
-		    "{0}");
+		XYItemLabelGenerator generator = new StandardXYItemLabelGenerator("{0}");
 		XYItemRenderer renderer = plot.getRenderer();
 		renderer.setBaseItemLabelGenerator(generator);
 		renderer.setBaseItemLabelsVisible(true);

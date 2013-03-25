@@ -33,7 +33,7 @@ public class MainController {
 			SAOExtractor extractor = SAOExtractor.getInstance();
 			
 			List<Patent> patentList = (List<Patent>) mgr.readObjectFromFile("data/dataset1.txt");
-			patentList = patentList.subList(0, 2);
+			patentList = patentList.subList(0, 3);
 			for (Patent p : patentList) {
 				String id = p.getId();
 				p.setSaoTupleList(extractor.getSAOTupleList(p.getFullText()));

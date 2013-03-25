@@ -31,8 +31,8 @@ public class JWSFetcher {
 		if (word1.equals(word2))
 			return 1;
 		Lin lin = jws.getLin();
-		double sim = lin.lin(word1, 1, word2, 1, type);
-		logger.debug(sim+" (" + word1 + "," + word2 + "," + type + ")");
+		double sim = lin.max(word1, word2, type);
+		logger.debug(sim + " (" + word1 + "," + word2 + "," + type + ")");
 
 		return sim;
 		// return lin.max(word1, word2, type); too slow
@@ -49,7 +49,6 @@ public class JWSFetcher {
 	public double getPatentDissim(Patent p1, Patent p2) {
 		List<SAOTuple> l1 = p1.getSaoTupleList();
 		List<SAOTuple> l2 = p2.getSaoTupleList();
-
 		double total = 0;
 		for (SAOTuple t1 : l1) {
 			for (SAOTuple t2 : l2) {
@@ -57,7 +56,7 @@ public class JWSFetcher {
 			}
 		}
 
-		return total * 2 / (l1.size() + l2.size());
+		return 1 - (total * 2 / (l1.size() + l2.size()));
 	}
 
 	public double old_getPatentDissimularity(Patent p1, Patent p2) {
