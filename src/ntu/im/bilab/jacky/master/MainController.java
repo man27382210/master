@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import ntu.im.bilab.jacky.master.item.Patent;
+import ntu.im.bilab.jacky.master.tools.data.FileManager;
 import ntu.im.bilab.jacky.master.tools.data.GoogleCrawler;
 import ntu.im.bilab.jacky.master.tools.data.PatentFetcher;
 import ntu.im.bilab.jacky.master.tools.data.USPTOCrawler;
@@ -20,44 +21,33 @@ public class MainController {
 	
 	public static void main(String[] args) {
 		try {
-			// fetch dataset1's id
-			PatentFetcher fetcher = new PatentFetcher();
-			List<String> idList = fetcher.fetchPatentByFile("doc/dataset1.txt");
-			System.out.println("Collecting patent_id dataset from file ... done.");
-			logger.info("Collecting patent_id dataset from file ... done.");
+//			PatentFetcher fetcher = new PatentFetcher();
+//			List<String> idList = fetcher.fetchPatentByFile("doc/dataset1.txt");
+//			System.out.println("Collecting patent_id dataset from file ... done.");
+//			logger.info("Collecting patent_id dataset from file ... done.");
+//			List<Patent> patentList = new ArrayList<Patent>();
+//			USPTOCrawler crawler = USPTOCrawler.getInstance();
+//			SAOExtractor extractor = SAOExtractor.getInstance();
 			
-			// fetch google data by id
-			List<Patent> patentList = new ArrayList<Patent>();
-			USPTOCrawler crawler = USPTOCrawler.getInstance();
+			FileManager mgr = new FileManager();
 			SAOExtractor extractor = SAOExtractor.getInstance();
-			for (String id : idList) {
-				Patent p = new Patent();
-				p.setId(id);
-				p.setFullText(crawler.crawlFullText(id));
-				
-				System.out.println("Crawling patent " + id + " ... done.");
-				logger.info("Crawling patent " + id + " ... done.");
-
-				patentList.add(p);
-				
-				// fetch sao tuples of data
+			
+			List<Patent> patentList = (List<Patent>) mgr.readObjectFromFile("data/dataset1.txt");
+			patentList = patentList.subList(0, 2);
+			for (Patent p : patentList) {
+				String id = p.getId();
 				p.setSaoTupleList(extractor.getSAOTupleList(p.getFullText()));
-				
 				System.out.println("SAO-Extracting patent " + id + " ... done.");
 				logger.info("SAO-Extracting patent " + id + " ... done.");
-				
-				if (patentList.size() > 3) break;
 			}
 				
 			PatentMapGenerator pmg = new PatentMapGenerator();
 			pmg.getPatentMap(patentList);
-
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-
 }

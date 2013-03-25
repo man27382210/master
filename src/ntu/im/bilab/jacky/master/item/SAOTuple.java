@@ -1,13 +1,13 @@
 package ntu.im.bilab.jacky.master.item;
 
-public class SAOTuple {
-	String clause;
+import java.io.Serializable;
+
+public class SAOTuple  {
 	String subject;
 	String predicate;
 	String object;
 	
-	public SAOTuple(String clause, String subject, String predicate, String object) {
-		this.clause = clause;
+	public SAOTuple(String subject, String predicate, String object) {
 		this.subject = subject;
 		this.predicate = predicate;
 		this.object = object;
@@ -17,14 +17,6 @@ public class SAOTuple {
 	public String toString() {
 		return "SAOTuple [S=" + subject + ", A=" + predicate + ", O=" + object
 		    + "]";
-	}
-
-	public String getClause() {
-		return clause;
-	}
-
-	public void setClause(String clause) {
-		this.clause = clause;
 	}
 
 	public String getSubject() {

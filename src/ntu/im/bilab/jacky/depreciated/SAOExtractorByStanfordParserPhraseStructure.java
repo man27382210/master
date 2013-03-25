@@ -47,7 +47,7 @@ public class SAOExtractorByStanfordParserPhraseStructure {
 		if (object == null)
 			return null;
 		checkPassiveVoice(predicate, subject, object);
-		return new SAOTuple(getText(clause), getText(subject), getText(predicate),
+		return new SAOTuple( getText(subject), getText(predicate),
 		    getText(object));
 	}
 

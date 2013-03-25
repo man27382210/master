@@ -141,7 +141,7 @@ public class SAOExtractor {
 						
 						if (predicate.equals(predicate2)) {
 
-							SAOTuple tuple = new SAOTuple("sent", subject.nodeString()
+							SAOTuple tuple = new SAOTuple(subject.nodeString()
 							    .toLowerCase(), predicate.nodeString().toLowerCase(), object
 							    .nodeString().toLowerCase());
 							logger.debug(tuple.toString());

@@ -14,4 +14,10 @@ public class Stemmer {
 		stemmer.stem();
 		return stemmer.getCurrent();
 	}
+	
+	public static void main(String[] args) {
+		Stemmer stemmer = new Stemmer();
+		String str =  stemmer.getStem("accommodated");
+		System.out.println(str);
+	}
 }

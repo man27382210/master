@@ -35,6 +35,7 @@ public class PatentMapGenerator {
 		for (Patent p1 : list) {
 			for (Patent p2 : list) {
 				input[x][y] = fetcher.getPatentDissim(p1, p2);
+				System.out.println("Fetching sim between " + p1.getId() + " and " + p2.getId());
 				if (x == y)
 					input[x][y] = 0;
 				y++;
@@ -42,11 +43,6 @@ public class PatentMapGenerator {
 			x++;
 			y = 0;
 		}
-
-		System.out.println(input[0][0]);
-		System.out.println(input[0][1]);
-		System.out.println(input[1][0]);
-		System.out.println(input[1][1]);
 
 		double[][] output = MDSJ.classicalScaling(input); // apply MDS
 		for (int i = 0; i < list.size(); i++) { // output all coordinates

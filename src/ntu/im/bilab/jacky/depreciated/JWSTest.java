@@ -12,11 +12,11 @@ public class JWSTest {
 		Patent p1 = new Patent();
 		Patent p2 = new Patent();
 		
-		SAOTuple t1 = new SAOTuple("", "apple", "love", "apple");
-		SAOTuple t2 = new SAOTuple("", "orange", "like", "pie");
-		SAOTuple t3 = new SAOTuple("", "apple", "hate", "apple");
-		SAOTuple t4 = new SAOTuple("", "device","draw", "apple");
-		SAOTuple t5 = new SAOTuple("", "apple", "watch", "bird");
+		SAOTuple t1 = new SAOTuple("", "apple", "love");
+		SAOTuple t2 = new SAOTuple("", "orange", "like");
+		SAOTuple t3 = new SAOTuple("", "apple", "hate");
+		SAOTuple t4 = new SAOTuple("", "device","draw");
+		SAOTuple t5 = new SAOTuple("", "apple", "watch");
 
 		List<SAOTuple> l1 = new ArrayList<SAOTuple>();
 		List<SAOTuple> l2 = new ArrayList<SAOTuple>();

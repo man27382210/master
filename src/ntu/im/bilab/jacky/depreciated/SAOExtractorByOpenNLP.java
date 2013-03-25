@@ -96,7 +96,7 @@ public class SAOExtractorByOpenNLP {
 			return null;
 		checkPassiveVoice(predicate, subject, object);
 		return new SAOTuple(clause.toString(), subject.toString(),
-		    predicate.toString(), object.toString());
+		    predicate.toString());
 	}
 
 	private void checkPassiveVoice(Parse predicate, Parse subject, Parse object) {

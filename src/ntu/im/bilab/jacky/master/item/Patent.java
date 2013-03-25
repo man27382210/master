@@ -1,14 +1,14 @@
 package ntu.im.bilab.jacky.master.item;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import ntu.im.bilab.jacky.master.tools.data.GoogleCrawler;
 
 public class Patent {
-
-	String id;
+  String id;
 	String year;
 	String abstracts;
 	String claims;
