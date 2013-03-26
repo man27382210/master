@@ -25,6 +25,10 @@ import edu.stanford.nlp.trees.TypedDependency;
 public class SAOExtractor {
 	private static SAOExtractor instance = null;
 	private Logger logger;
+	private List<String> subjectTd;
+	private List<String> objectTd;
+	private StanfordParser parser;
+	private GrammaticalStructureFactory gsf;
 	
 	// singleton
 	public static SAOExtractor getInstance() {
@@ -32,12 +36,7 @@ public class SAOExtractor {
 			instance = new SAOExtractor();
 		}
 		return instance;
-	}
-
-	private List<String> subjectTd;
-	private List<String> objectTd;
-	private StanfordParser parser;
-	private GrammaticalStructureFactory gsf;
+	}	
 
 	private final int MAX_LENGTH_OF_SENTENCE = 30;
 
@@ -75,18 +74,19 @@ public class SAOExtractor {
 		List<String> sentList = splitParagraph(paragraph);
 		List<SAOTuple> tupleList = new ArrayList<SAOTuple>();
 
-		//System.out.println("Found sentences : " + sentList.size());
+		// System.out.println("Found sentences : " + sentList.size());
 		logger.debug("Found sentences : " + sentList.size());
 		int count = 1;
 		// add tuple list
 		for (String sent : sentList) {
 			// System.out.println(sent);
-			//System.out.println("Extract sentence : " + count++ + " of  + sentList.size());
+			// System.out.println("Extract sentence : " + count++ + " of +
+			// sentList.size());
 			logger.debug("Extract sentence : " + count++ + " of " + sentList.size());
 			tupleList.addAll(getSAOTupleListBySentence(sent));
 		}
 		logger.debug("Found SAO tuple : " + tupleList.size());
-		//System.out.println("Found SAO tuple : " + tupleList.size());
+		// System.out.println("Found SAO tuple : " + tupleList.size());
 		return tupleList;
 	}
 
@@ -112,38 +112,42 @@ public class SAOExtractor {
 		return sentList;
 	}
 
-	private List<SAOTuple> getSAOTupleListBySentence(String sent) throws IOException {
+	private List<SAOTuple> getSAOTupleListBySentence(String sent)
+	    throws IOException {
 		List<SAOTuple> tupleList = new ArrayList<SAOTuple>();
 		Tree parse = parser.parse(sent);
 		List<TypedDependency> tdl = gsf.newGrammaticalStructure(parse)
 		    .typedDependenciesCCprocessed();
 
-		
-		SAOFilter filter = SAOFilter.getInstance();
+		StopWordRemover filter = StopWordRemover.getInstance();
 		for (TypedDependency td : tdl) {
 			// System.out.println(td.toString());
 			// get subject
 			if (subjectTd.contains(getName(td))) {
 				TreeGraphNode subject = td.dep();
 				TreeGraphNode predicate = td.gov();
-				
-				if(filter.matchFilter(subject.nodeString().toLowerCase())) continue;
-				if(filter.matchFilter(predicate.nodeString().toLowerCase())) continue;
-				
+
+				if (filter.matchFilter(subject.nodeString().toLowerCase()))
+					continue;
+				if (filter.matchFilter(predicate.nodeString().toLowerCase()))
+					continue;
+
 				for (TypedDependency td2 : tdl) {
 
 					if (objectTd.contains(getName(td2))) {
 						TreeGraphNode object = td2.dep();
 						TreeGraphNode predicate2 = td2.gov();
 
-						if(filter.matchFilter(object.nodeString().toLowerCase())) continue;
-						if(filter.matchFilter(predicate2.nodeString().toLowerCase())) continue;
-						
+						if (filter.matchFilter(object.nodeString().toLowerCase()))
+							continue;
+						if (filter.matchFilter(predicate2.nodeString().toLowerCase()))
+							continue;
+
 						if (predicate.equals(predicate2)) {
 
-							SAOTuple tuple = new SAOTuple(subject.nodeString()
-							    .toLowerCase(), predicate.nodeString().toLowerCase(), object
-							    .nodeString().toLowerCase());
+							SAOTuple tuple = new SAOTuple(subject.nodeString().toLowerCase(),
+							    predicate.nodeString().toLowerCase(), object.nodeString()
+							        .toLowerCase());
 							logger.debug(tuple.toString());
 							tupleList.add(tuple);
 						}

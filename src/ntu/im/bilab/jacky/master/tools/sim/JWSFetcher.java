@@ -80,7 +80,7 @@ public class JWSFetcher {
 	public static void main(String[] args) {
 		JWSFetcher f = JWSFetcher.getInstance();
 		logger.info("asd");
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10000; i++) {
 			double s1 = f.getSim("cat", "dog", "n");
 		}
 		logger.info("asd2");
