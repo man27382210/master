@@ -14,5 +14,10 @@
 	<classpathentry kind="lib" path="lib/mdsj.jar"/>
 	<classpathentry kind="lib" path="lib/opennlp/opennlp-maxent-3.0.2-incubating.jar"/>
 	<classpathentry kind="lib" path="lib/opennlp/opennlp-tools-1.5.2-incubating.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-4.2.0/core/lucene-core-4.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-4.2.0/queries/lucene-queries-4.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-4.2.0/queryparser/lucene-queryparser-4.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-4.2.0/analysis/common/lucene-analyzers-common-4.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-4.2.0/codecs/lucene-codecs-4.2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

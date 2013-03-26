@@ -21,6 +21,8 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.search.similarities.DefaultSimilarity;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
@@ -53,6 +55,11 @@ public class HelloLucene {
 //		addDoc(w, "The Art of Computer Science", "9900333X");
 		w.close();
 
+		
+
+		
+		
+		
 		// 2. query
 		String querystr = args.length > 0 ? args[0] : "device";
 

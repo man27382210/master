@@ -36,17 +36,20 @@ public class MainController {
 			
 			
 			List<Patent> patentList = (List<Patent>) mgr.readObjectFromFile("data/dataset1.txt");
-			patentList = patentList.subList(0, 3);
+			//patentList = patentList.subList(0, 3);
+			int i = 1;
 			for (Patent p : patentList) {
 				String id = p.getId();
 				p.setSaoTupleList(extractor.getSAOTupleList(p.getFullText()));
-				filter.filteSAOTupleList(p);
-				System.out.println("SAO-Extracting patent " + id + ", " + p.getSaoTupleList().size() + " tuples fetched");
+				//filter.filteSAOTupleList(p);
+				System.out.println(i++ + ". SAO-Extracting patent " + id + ", " + p.getSaoTupleList().size() + " tuples fetched");
 				logger.info("SAO-Extracting patent " + id + " ... done.");
 			}
+			
+			mgr.writeObjectToFile("data/dataset1-alltuple.txt", patentList);
 				
-			PatentMapGenerator pmg = new PatentMapGenerator();
-			pmg.getPatentMap(patentList);
+			//PatentMapGenerator pmg = new PatentMapGenerator();
+			//pmg.getPatentMap(patentList);
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

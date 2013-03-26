@@ -21,12 +21,14 @@ public class USPTOCrawler {
 	public String crawlFullText(String id) throws IOException {
 		String url = patentURL + id;
 		Document doc = Jsoup.connect(url).timeout(3000).get();
-		
-    Elements meta = doc.select("html head meta");
-    if (meta.attr("http-equiv").contains("REFRESH")) {
-    	doc = Jsoup.connect(baseURL+meta.attr("content").split("URL=")[1]).get();
-    }
-    return doc.body().text();
+
+		Elements meta = doc.select("html head meta");
+		if (meta.attr("http-equiv").contains("REFRESH")) {
+			doc = Jsoup
+					.connect(baseURL + meta.attr("content").split("URL=")[1])
+					.get();
+		}
+		return doc.body().text().trim();
 	}
-		
+
 }
