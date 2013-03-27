@@ -18,9 +18,9 @@ public class PatentSimilarity {
 		}
 		return instance;
 	}
-	
+
 	private double getWordSim(String w1, String w2, String type)
-	    throws IOException {
+			throws IOException {
 		if (similarityType.equals("google1")) {
 			return gsim.getGoogleDistance(w1, w2);
 		} else {
@@ -38,13 +38,33 @@ public class PatentSimilarity {
 	public double getPatentDissim(Patent p1, Patent p2) throws IOException {
 		List<SAOTuple> l1 = p1.getSaoTupleList();
 		List<SAOTuple> l2 = p2.getSaoTupleList();
-		double total = 0;
+		double total1 = 0, total2 = 0;
+
 		for (SAOTuple t1 : l1) {
+			// find max pair for t1
+			double max = 0;
 			for (SAOTuple t2 : l2) {
-				total = total + getPairTupleSim(t1, t2);
+				double tmp = getPairTupleSim(t1, t2);
+				if (tmp > max)
+					max = tmp;
 			}
+			total1 = total1 + max;
 		}
-		return 1 - (total / (l1.size() * l2.size()));
+
+		for (SAOTuple t2 : l2) {
+			// find max pair for t2
+			double max = 0;
+			for (SAOTuple t1 : l1) {
+				double tmp = getPairTupleSim(t1, t2);
+				if (tmp > max)
+					max = tmp;
+			}
+			total2 = total2 + max;
+		}
+
+		double sim = ((total1 / l1.size()) + (total2 / l2.size())) /2 ;
+
+		return 1 - sim;
 	}
 
 	public static void main(String[] args) {

@@ -26,12 +26,7 @@ import tools.sim.WordNetSimilarity;
 
 public class PatentMapGenerator {
 
-	private List<PatentMap> map = new ArrayList<PatentMap>();
-
-	public class PatentMap {
-	}
-
-	public List<PatentMap> getPatentMap(List<Patent> list) throws IOException {
+	public void getPatentMap(List<Patent> list) throws IOException {
 		int size = list.size();
 		PatentSimilarity sim = PatentSimilarity.getInstance();
 		double[][] input = new double[size][size];
@@ -65,7 +60,6 @@ public class PatentMapGenerator {
 		}
 
 		show(output, list);
-		return map;
 	}
 
 	public void show(double[][] data, List<Patent> list) {

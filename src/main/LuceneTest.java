@@ -10,6 +10,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.Fields;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -46,7 +47,18 @@ public class LuceneTest {
 		addDoc(w, "The Art of Computer Science", "9900333X");
 		w.close();
 
+		
+	
+		System.out.println(index.toString());
+		
+		
 		IndexReader reader = DirectoryReader.open(index);
+		Fields fields = reader.getTermVectors(0);
+		System.out.println(fields);
+		for(String field : fields) {
+			System.out.println(field);
+			Terms terms = fields.terms(field);
+		}
 		for (int i = 0; i < reader.maxDoc(); i++) {
 			
 			System.out.println(reader.docFreq(new Term("title")));	
