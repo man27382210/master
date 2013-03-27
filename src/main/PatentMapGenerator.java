@@ -1,8 +1,9 @@
-package tools.sim;
+package main;
 
 import item.Patent;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,9 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import tools.sim.PatentSimilarity;
+import tools.sim.WordNetSimilarity;
+
 public class PatentMapGenerator {
 
 	private List<PatentMap> map = new ArrayList<PatentMap>();
@@ -27,9 +31,9 @@ public class PatentMapGenerator {
 	public class PatentMap {
 	}
 
-	public List<PatentMap> getPatentMap(List<Patent> list) {
+	public List<PatentMap> getPatentMap(List<Patent> list) throws IOException {
 		int size = list.size();
-		JWSFetcher fetcher = JWSFetcher.getInstance();
+		PatentSimilarity sim = PatentSimilarity.getInstance();
 		double[][] input = new double[size][size];
 
 		int x = 0, y = 0;
@@ -44,9 +48,9 @@ public class PatentMapGenerator {
 					y++;
 					continue;
 				} else {
-					input[x][y] = fetcher.getPatentDissim(p1, p2);
+					input[x][y] = sim.getPatentDissim(p1, p2);
 					System.out.println("Fetching sim between " + p1.getId() + " and "
-					    + p2.getId());
+					    + p2.getId() + " : " + input[x][y]);
 
 					y++;
 				}

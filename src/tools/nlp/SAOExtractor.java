@@ -13,7 +13,6 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.trees.GrammaticalStructure;
@@ -30,17 +29,17 @@ public class SAOExtractor {
 	private List<String> objectTd;
 	private StanfordParser parser;
 	private GrammaticalStructureFactory gsf;
-	
-	// singleton
+	private final int MAX_LENGTH_OF_SENTENCE = 30;
+
+	// singleton pattern
 	public static SAOExtractor getInstance() {
 		if (instance == null) {
 			instance = new SAOExtractor();
 		}
 		return instance;
-	}	
+	}
 
-	private final int MAX_LENGTH_OF_SENTENCE = 30;
-
+	// constructor
 	public SAOExtractor() {
 		parser = StanfordParser.getInstance();
 		gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
@@ -49,51 +48,28 @@ public class SAOExtractor {
 		logger = Logger.getLogger(this.getClass().getSimpleName());
 	}
 
-	private String getDep(TypedDependency td) {
-		return td.dep().nodeString();
-	}
-
 	private String getName(TypedDependency td) {
 		return td.reln().getShortName();
 	}
 
-	public List<String> getObjectList(String sent) {
-		List<String> list = new ArrayList<String>();
-		Tree parse = parser.parse(sent);
-		GrammaticalStructure gs = gsf.newGrammaticalStructure(parse);
-		List<TypedDependency> tdl = gs.typedDependenciesCCprocessed();
-		for (TypedDependency td : tdl) {
-			if (objectTd.contains(getName(td)))
-				if (!list.contains(getDep(td)))
-					list.add(getDep(td));
-		}
-
-		return list;
-	}
-
+	// get all sao list in a paragraph
 	public List<SAOTuple> getSAOTupleList(String paragraph) throws IOException {
 		List<String> sentList = splitParagraph(paragraph);
 		List<SAOTuple> tupleList = new ArrayList<SAOTuple>();
 
-		// System.out.println("Found sentences : " + sentList.size());
 		logger.debug("Found sentences : " + sentList.size());
 		int count = 1;
-		// add tuple list
 		for (String sent : sentList) {
-			// System.out.println(sent);
-			// System.out.println("Extract sentence : " + count++ + " of +
-			// sentList.size());
 			logger.debug("Extract sentence : " + count++ + " of " + sentList.size());
 			tupleList.addAll(getSAOTupleListBySentence(sent));
 		}
 		logger.debug("Found SAO tuple : " + tupleList.size());
-		// System.out.println("Found SAO tuple : " + tupleList.size());
 		return tupleList;
 	}
 
+	// split a paragraph into several sentence
 	private List<String> splitParagraph(String paragraph) {
-		List<String> sentList = new ArrayList<String>();
-		// convert data into splited sentence
+		List<String> sentenceList = new ArrayList<String>();
 		Reader reader = new StringReader(paragraph);
 		DocumentPreprocessor dp = new DocumentPreprocessor(reader);
 		Iterator<List<HasWord>> it = dp.iterator();
@@ -108,71 +84,47 @@ public class SAOExtractor {
 				}
 				sentenceSb.append(token);
 			}
-			sentList.add(sentenceSb.toString());
+			sentenceList.add(sentenceSb.toString());
 		}
-		return sentList;
+		return sentenceList;
 	}
 
+	// get sao list in a sentence
 	private List<SAOTuple> getSAOTupleListBySentence(String sent)
 	    throws IOException {
-		List<SAOTuple> tupleList = new ArrayList<SAOTuple>();
+		List<SAOTuple> saoTupleList = new ArrayList<SAOTuple>();
+		// create the parse structure
 		Tree parse = parser.parse(sent);
 		List<TypedDependency> tdl = gsf.newGrammaticalStructure(parse)
 		    .typedDependenciesCCprocessed();
 
-		StopWordRemover filter = StopWordRemover.getInstance();
+		StopWordRemover remover = StopWordRemover.getInstance();
 		for (TypedDependency td : tdl) {
-			// System.out.println(td.toString());
-			// get subject
+			// get dependency match subject relationship
 			if (subjectTd.contains(getName(td))) {
 				TreeGraphNode subject = td.dep();
 				TreeGraphNode predicate = td.gov();
-
-				if (filter.matchFilter(subject.nodeString().toLowerCase()))
+				// match stopword
+				if (remover.matchFilter(subject.nodeString())
+				    || remover.matchFilter(predicate.nodeString()))
 					continue;
-				if (filter.matchFilter(predicate.nodeString().toLowerCase()))
-					continue;
-
 				for (TypedDependency td2 : tdl) {
-
 					if (objectTd.contains(getName(td2))) {
 						TreeGraphNode object = td2.dep();
 						TreeGraphNode predicate2 = td2.gov();
-
-						if (filter.matchFilter(object.nodeString().toLowerCase()))
+						if (remover.matchFilter(object.nodeString()))
 							continue;
-						if (filter.matchFilter(predicate2.nodeString().toLowerCase()))
-							continue;
-
 						if (predicate.equals(predicate2)) {
-
-							SAOTuple tuple = new SAOTuple(subject.nodeString().toLowerCase(),
-							    predicate.nodeString().toLowerCase(), object.nodeString()
-							        .toLowerCase());
+							SAOTuple tuple = new SAOTuple(new String(subject.nodeString()),
+							    new String(predicate.nodeString()), new String(object.nodeString()));
 							logger.debug(tuple.toString());
-							tupleList.add(tuple);
+							saoTupleList.add(tuple);
 						}
 					}
 				}
-
 			}
-
 		}
 
-		return tupleList;
-	}
-
-	public List<String> getSubjectList(String sent) {
-		List<String> subjectList = new ArrayList<String>();
-		Tree parse = parser.parse(sent);
-		GrammaticalStructure gs = gsf.newGrammaticalStructure(parse);
-		List<TypedDependency> tdl = gs.typedDependenciesCCprocessed();
-
-		for (TypedDependency td : tdl) {
-			if (subjectTd.contains(getName(td)))
-				subjectList.add(getDep(td));
-		}
-
-		return subjectList;
+		return saoTupleList;
 	}
 }

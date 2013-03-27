@@ -7,9 +7,8 @@ import java.util.List;
 
 import tools.data.GoogleCrawler;
 
-
 public class Patent {
-  String id;
+	String id;
 	String year;
 	String abstracts;
 	String claims;
@@ -21,7 +20,7 @@ public class Patent {
 		GoogleCrawler gc = GoogleCrawler.getInstance();
 		return gc.crawl(id);
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -71,24 +70,24 @@ public class Patent {
 	}
 
 	@Override
-  public String toString() {
-	  return "Patent [id=" + id + ", saoTupleList=" + saoTupleList + "]";
-  }
+	public String toString() {
+		return "Patent [id=" + id + ", saoTupleList=" + saoTupleList + "]";
+	}
 
 	public void show() {
-	  System.out.println("--- Patent info ---");
-	  System.out.println("id : " + id);
-	  for (SAOTuple t : saoTupleList) {
-	  	System.out.println(t);
-	  }
-  }
+		System.out.println("--- Patent info ---");
+		System.out.println("id : " + id);
+		for (SAOTuple t : saoTupleList) {
+			System.out.println(t);
+		}
+	}
 
 	public void setFullText(String fullText) {
-	  this.fullText = fullText;
-  }
+		this.fullText = fullText;
+	}
 
 	public String getFullText() {
-	  return fullText;
-  }
-	
+		return fullText;
+	}
+
 }
