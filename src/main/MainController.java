@@ -16,6 +16,8 @@ import tools.data.PatentFetcher;
 import tools.data.USPTOCrawler;
 import tools.nlp.SAOExtractor;
 import tools.nlp.SAOFilter;
+import tools.nlp.Stemmer;
+import tools.sim.WordNetSimilarity;
 
 
 public class MainController {
@@ -26,20 +28,25 @@ public class MainController {
 		try {
 			FileManager mgr = new FileManager();
 			List<Patent> list = (List<Patent>) mgr.readObjectFromFile("data/dataset1-alltuple.txt");
-		  //list = list.subList(0, 2);
 			TFIDFRanker ranker = TFIDFRanker.getInstance();
 			ranker.load(list);
 			
 			SAOFilter filter = SAOFilter.getInstance();
-			
 			for (Patent p : list) {
 				System.out.println(p.getSaoTupleList());
-				filter.filteSAOTupleList(p);
+				filter.filterSAOTupleList(p);
 				System.out.println(p.getSaoTupleList());
 			}
 			
+			Stemmer stemmer = Stemmer.getInstance();
+			stemmer.stem(list);
+			
 			PatentMapGenerator g = new PatentMapGenerator();
 			g.getPatentMap(list);
+			
+			WordNetSimilarity w = WordNetSimilarity.getInstance();
+			System.out.println("zero = "+w.zero); 
+			System.out.println("non-zero = "+w.nzero); 
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
