@@ -26,11 +26,16 @@ public class MainController {
 		try {
 			FileManager mgr = new FileManager();
 			List<Patent> list = (List<Patent>) mgr.readObjectFromFile("data/dataset1-alltuple.txt");
-			//list = list.subList(0, 15);
+		  //list = list.subList(0, 2);
+			TFIDFRanker ranker = TFIDFRanker.getInstance();
+			ranker.load(list);
+			
+			SAOFilter filter = SAOFilter.getInstance();
+			
 			for (Patent p : list) {
-				List<SAOTuple> tl = p.getSaoTupleList();
-				if(tl.size() > 10) tl = tl.subList(0, 1);
-				p.setSaoTupleList(tl);
+				System.out.println(p.getSaoTupleList());
+				filter.filteSAOTupleList(p);
+				System.out.println(p.getSaoTupleList());
 			}
 			
 			PatentMapGenerator g = new PatentMapGenerator();
