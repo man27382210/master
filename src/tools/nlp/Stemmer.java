@@ -1,7 +1,7 @@
 package tools.nlp;
 
 import item.Patent;
-import item.SAOTuple;
+import item.SaoTuple;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import org.tartarus.snowball.SnowballProgram;
 import org.tartarus.snowball.ext.EnglishStemmer;
+import org.tartarus.snowball.ext.PorterStemmer;
 
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
@@ -18,7 +20,7 @@ import edu.mit.jwi.morph.WordnetStemmer;
 
 public class Stemmer {
 	private static Stemmer instance;
-	private WordnetStemmer stemmer;
+	private WordnetStemmer wordnetStemmer;
 	
 	public static Stemmer getInstance() throws IOException {
 		if(instance == null) {
@@ -26,13 +28,13 @@ public class Stemmer {
 			URL url = new URL("file", null, "wordnet/3.0/dict");
 			IDictionary dict = new Dictionary(url);;
 			dict.open();
-			instance.stemmer = new WordnetStemmer(dict);
+			instance.wordnetStemmer = new WordnetStemmer(dict);
 		}
 		return instance;
 	}
 
 	public String getStem(String word , POS pos) {
-		List<String> list = stemmer.findStems(word, pos);
+		List<String> list = wordnetStemmer.findStems(word, pos);
 		if (!list.isEmpty()) {
 			return list.get(0);
 		}else {
@@ -46,15 +48,15 @@ public class Stemmer {
 		}
 	}
 	
-	public void stem(SAOTuple t) {
+	public void stem(SaoTuple t) {
 		t.setSubject(getStem(t.getSubject(), POS.NOUN));
 		t.setPredicate(getStem(t.getPredicate(), POS.VERB));
 		t.setObject(getStem(t.getObject(), POS.NOUN));
 	}
 	
 	public void stem(Patent p) {
-		List<SAOTuple> list = p.getSaoTupleList();
-		for (SAOTuple t : list) {
+		List<SaoTuple> list = p.getSaoTupleList();
+		for (SaoTuple t : list) {
 			stem(t);
 		}
 	}

@@ -10,25 +10,38 @@ import java.util.List;
 public class StopWordRemover {
 	private static StopWordRemover instance = null;
 	private List<String> stopWordList = new ArrayList<String>();
+	private List<String> generalWordList = new ArrayList<String>();
 	
 	public static StopWordRemover getInstance() throws IOException{
 		if (instance == null ){
 			instance = new StopWordRemover();
 			instance.loadStopWord();
+			instance.loadGeneralWord();
 		}
 		return instance;
 	}
 	
+	private void loadGeneralWord() {
+		generalWordList.add("DESCRIPTION");
+		generalWordList.add("FIGURE");
+		generalWordList.add("FIG");
+		generalWordList.add("BACKGROUND");
+  }
+
 	private boolean isStopWord(String word) {
 		return stopWordList.contains(word);
 	}
 
-	private boolean isNumber(String word) {
-		return word.matches(".*\\d.*");
+	private boolean isAlphabetStr(String word) {
+		return word.matches("^[A-Za-z]+$");
+	}
+	
+	private boolean isGeneral(String word) {
+		return generalWordList.contains(word);
 	}
 	
 	public boolean matchFilter(String word) {
-		return (isStopWord(word) || isNumber(word));
+		return (isStopWord(word) || !isAlphabetStr(word) || isGeneral(word));
 	}
 	
 	private void loadStopWord() throws IOException {

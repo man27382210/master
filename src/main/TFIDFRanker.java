@@ -5,18 +5,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.DocsEnum;
+import org.apache.lucene.index.FieldInfo.IndexOptions;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.index.TermsEnum;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
@@ -26,6 +31,7 @@ import org.apache.lucene.util.Version;
 import tools.data.FileManager;
 
 import item.Patent;
+import item.SaoTuple;
 
 public class TFIDFRanker {
 	private static TFIDFRanker instance = null;
@@ -42,18 +48,36 @@ public class TFIDFRanker {
 	// map (term , map (doc id , termfreq) )
 	Map<String, HashMap<Integer, Integer>> termFreqMap = new HashMap<String, HashMap<Integer, Integer>>();
 
-//	public static void main(String args[]) throws IOException {
-//		FileManager mgr = new FileManager();
-//		List<Patent> list = (List<Patent>) mgr.readObjectFromFile("data/dataset1.txt");
-//		TFIDFRanker r = new TFIDFRanker();
-//		r.load(list);
-//	}
-
-	private void addDoc(IndexWriter w, String id, String content)
+	public static void main(String[] args) throws IOException, ParseException {
+    Directory directory = new RAMDirectory();  
+    Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_42);
+    IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42, analyzer);
+    IndexWriter writer = new IndexWriter(directory, config);
+    addDoc(writer, "1123","bla bla bla bleu bleu");
+    addDoc(writer, "1234","bla bla bla bla");
+    writer.close();
+    DirectoryReader reader = DirectoryReader.open(directory);
+    DocsEnum de = MultiFields.getTermDocsEnum(reader, MultiFields.getLiveDocs(reader), "content", new BytesRef("bla"));
+    int doc;
+    while((doc = de.nextDoc()) != DocsEnum.NO_MORE_DOCS) {
+          System.out.println(de.freq());
+    }
+    reader.close();
+}
+	
+	private static void addDoc(IndexWriter w, String id, String content)
 	    throws IOException {
+		FieldType fieldType = new FieldType();
+    fieldType.setStoreTermVectors(true);
+    fieldType.setStoreTermVectorPositions(true);
+    fieldType.setIndexed(true);
+    fieldType.setIndexOptions(IndexOptions.DOCS_AND_FREQS);
+    fieldType.setStored(true);
+    
 		Document doc = new Document();
 		doc.add(new StringField("id", id, Field.Store.YES));
-		doc.add(new TextField("content", content, Field.Store.NO));
+		doc.add(new Field("content", content, fieldType));
+		//doc.add(new TextField("content", content, Field.Store.NO));
 		w.addDocument(doc);
 	}
 
@@ -94,43 +118,29 @@ public class TFIDFRanker {
 		long minTTF = 0;
 		int minTermFreq = 0;
 
-		do {
-			term = terms.next();
-			// System.out.println(term.utf8ToString());
-			if (term != null) {
-				HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
-				int docFreq = terms.docFreq();
-				// System.out.println(docFreq);
-				long ttf = terms.totalTermFreq();
-				// System.out.println(ttf);
-				if (docFreq > minDocs && ttf > minTTF) {
-					docs = terms.docs(null, docs);
-					int docID = -1;
-					do {
-						docID = docs.nextDoc();
-						if (docID != DocIdSetIterator.NO_MORE_DOCS) {
-							int termFreq = docs.freq();
-							if (termFreq > minTermFreq)
-								map.put(docID, docs.freq());
-							// System.out.println(term.utf8ToString() + "," + docID + ","
-							// + docs.freq());
-						}
-					} while (docID != DocIdSetIterator.NO_MORE_DOCS);
+		while((term = terms.next()) != null) {
+			// map (doc id, term freq)
+			HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+			int docFreq = terms.docFreq();
+			long ttf = terms.totalTermFreq();
+			if (docFreq > minDocs && ttf > minTTF) {
+				docs = terms.docs(null, docs);
+				int docID = -1;
+				while((docID = docs.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
+					int termFreq = docs.freq();
+					if (termFreq > minTermFreq)
+						map.put(docID, docs.freq());
 				}
 				termFreqMap.put(term.utf8ToString(), map);
 			}
-		} while (term != null);
+		}
 	}
 
 	private int getTF(String id, String term) {
 		int docID = idMap.get(id);
 		Map<Integer, Integer> map = termFreqMap.get(term);
 		if (map == null || !map.containsKey(docID)) return 0;
-//		System.out.println(map);
-//		System.out.println(docID);
-//		System.out.println(term);
 		int termFreq = map.get(docID);
-		//System.out.println(term + " tf=" + termFreq);
 		return termFreq;
 	}
 
@@ -145,5 +155,13 @@ public class TFIDFRanker {
 
 	public double getTFIDF(String id, String term) {
 		return getTF(id, term) * getIDF(term);
+	}
+	
+	public double getTFIDF(String id, SaoTuple t) {
+		double value = getTFIDF(id, t.getSubject())
+				+ getTFIDF(id, t.getPredicate())
+				+ getTFIDF(id, t.getObject());
+		System.out.println(t.getSubject() + " TFIDF:" + getTFIDF(id, t.getSubject()));
+		return value;
 	}
 }

@@ -1,21 +1,31 @@
 package tools.data;
 
+import item.MakeInstrumentationUtil;
+import item.Patent;
+import item.SaoTuple;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Properties;
 
-public class DBSource {
+import org.javalite.activejdbc.Base;
+
+import tools.nlp.SAOExtractor;
+
+public class DBManager {
+	private static DBManager instance;
 	private static Properties props;
 	private String driver;
 	private String url;
 	private String user;
 	private String password;
 
-	public DBSource() throws FileNotFoundException, IOException {
+	private DBManager() throws FileNotFoundException, IOException {
 		loadProperties();
 		driver = getConfig("driver");
 		url = getConfig("url");
@@ -23,17 +33,16 @@ public class DBSource {
 		password = getConfig("password");
 	}
 
-	public Connection getConnection() throws ClassNotFoundException, SQLException {
-		Class.forName(driver);
-		Connection conn = DriverManager.getConnection(url, user, password);
-		return conn;
+	public static DBManager getInstance() throws FileNotFoundException,
+	    IOException {
+		if (instance == null) {
+			instance = new DBManager();
+		}
+		return instance;
 	}
 
-	public void closeConnection(Connection conn) throws SQLException {
-		conn.close();
-	}
-	
-	private static void loadProperties() throws FileNotFoundException, IOException {
+	private static void loadProperties() throws FileNotFoundException,
+	    IOException {
 		props = new Properties();
 		props.load(new FileInputStream("config.properties"));
 	}
@@ -41,4 +50,13 @@ public class DBSource {
 	private static String getConfig(String key) {
 		return props.getProperty(key);
 	}
+
+	public void open() {
+		Base.open(driver, url, user, password);
+	}
+
+	public void close() {
+		Base.close();
+	}
+
 }

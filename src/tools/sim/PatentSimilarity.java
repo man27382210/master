@@ -1,7 +1,7 @@
 package tools.sim;
 
 import item.Patent;
-import item.SAOTuple;
+import item.SaoTuple;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,7 +28,7 @@ public class PatentSimilarity {
 		}
 	}
 
-	private double getPairTupleSim(SAOTuple t1, SAOTuple t2) throws IOException {
+	private double getPairTupleSim(SaoTuple t1, SaoTuple t2) throws IOException {
 		double s1 = getWordSim(t1.getSubject(), t2.getSubject(), "n");
 		double s2 = getWordSim(t1.getPredicate(), t2.getPredicate(), "v");
 		double s3 = getWordSim(t1.getObject(), t2.getObject(), "n");
@@ -36,14 +36,14 @@ public class PatentSimilarity {
 	}
 
 	public double getPatentDissim(Patent p1, Patent p2) throws IOException {
-		List<SAOTuple> l1 = p1.getSaoTupleList();
-		List<SAOTuple> l2 = p2.getSaoTupleList();
+		List<SaoTuple> l1 = p1.getSaoTupleList();
+		List<SaoTuple> l2 = p2.getSaoTupleList();
 		double total1 = 0, total2 = 0;
 
-		for (SAOTuple t1 : l1) {
+		for (SaoTuple t1 : l1) {
 			// find max pair for t1
 			double max = 0;
-			for (SAOTuple t2 : l2) {
+			for (SaoTuple t2 : l2) {
 				double tmp = getPairTupleSim(t1, t2);
 				if (tmp > max)
 					max = tmp;
@@ -51,10 +51,10 @@ public class PatentSimilarity {
 			total1 = total1 + max;
 		}
 
-		for (SAOTuple t2 : l2) {
+		for (SaoTuple t2 : l2) {
 			// find max pair for t2
 			double max = 0;
-			for (SAOTuple t1 : l1) {
+			for (SaoTuple t1 : l1) {
 				double tmp = getPairTupleSim(t1, t2);
 				if (tmp > max)
 					max = tmp;

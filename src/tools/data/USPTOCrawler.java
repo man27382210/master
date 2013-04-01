@@ -1,7 +1,11 @@
 package tools.data;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
+import org.javalite.activejdbc.Base;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -31,4 +35,10 @@ public class USPTOCrawler {
 		return doc.body().text().trim();
 	}
 
+	public static void main(String[] args) {
+	
+		
+		
+		
+	}
 }

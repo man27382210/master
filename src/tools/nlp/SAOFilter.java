@@ -1,7 +1,7 @@
 package tools.nlp;
 
 import item.Patent;
-import item.SAOTuple;
+import item.SaoTuple;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,18 +29,18 @@ public class SAOFilter {
 
 	public void filterSAOTupleList(Patent patent) {
 		this.patent = patent;
-		List<SAOTuple> list = patent.getSaoTupleList();
+		List<SaoTuple> list = patent.getSaoTupleList();
 		SAOTupleComparator comparator = new SAOTupleComparator();
 		Collections.sort(list, comparator);
-		list = list.subList(list.size() - 6, list.size() - 1);
+		//list = list.subList(list.size() - 6, list.size() - 1);
 		patent.setSaoTupleList(list);
 	}
 
 	public class SAOTupleComparator implements Comparator<Object> {
 		@Override
 		public int compare(Object arg0, Object arg1) {
-			SAOTuple t1 = (SAOTuple) arg0;
-			SAOTuple t2 = (SAOTuple) arg1;
+			SaoTuple t1 = (SaoTuple) arg0;
+			SaoTuple t2 = (SaoTuple) arg1;
 			String id = patent.getId();
 
 			double v1 = ranker.getTFIDF(id, t1.getSubject())
@@ -57,7 +57,7 @@ public class SAOFilter {
 			// System.out.println(d1 + t1.toString());
 			// System.out.println(d2 + t2.toString());
 
-			return d1.compareTo(d2);
+			return d2.compareTo(d1);
 		}
 	}
 

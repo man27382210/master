@@ -1,20 +1,21 @@
 package item;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.javalite.activejdbc.Model;
+
 import tools.data.GoogleCrawler;
 
-public class Patent {
+public class Patent extends Model {
 	String id;
 	String year;
 	String abstracts;
 	String claims;
 	String description;
 	String fullText;
-	List<SAOTuple> saoTupleList = new ArrayList<SAOTuple>();
+	List<SaoTuple> saoTupleList = new ArrayList<SaoTuple>();
 
 	public static Patent getPatent(String id) throws IOException {
 		GoogleCrawler gc = GoogleCrawler.getInstance();
@@ -61,11 +62,11 @@ public class Patent {
 		this.description = description;
 	}
 
-	public List<SAOTuple> getSaoTupleList() {
+	public List<SaoTuple> getSaoTupleList() {
 		return saoTupleList;
 	}
 
-	public void setSaoTupleList(List<SAOTuple> saoTupleList) {
+	public void setSaoTupleList(List<SaoTuple> saoTupleList) {
 		this.saoTupleList = saoTupleList;
 	}
 
@@ -77,7 +78,7 @@ public class Patent {
 	public void show() {
 		System.out.println("--- Patent info ---");
 		System.out.println("id : " + id);
-		for (SAOTuple t : saoTupleList) {
+		for (SaoTuple t : saoTupleList) {
 			System.out.println(t);
 		}
 	}

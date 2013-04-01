@@ -1,21 +1,26 @@
 package item;
 
-import java.io.Serializable;
+import org.javalite.activejdbc.Model;
 
-public class SAOTuple  {
+public class SaoTuple extends Model{
+	String patentId;
 	String subject;
 	String predicate;
 	String object;
 	
-	public SAOTuple(String subject, String predicate, String object) {
+	public SaoTuple(String subject, String predicate, String object) {
 		this.subject = subject;
 		this.predicate = predicate;
 		this.object = object;
 	}
 
+	public SaoTuple() {
+	  // TODO Auto-generated constructor stub
+  }
+
 	@Override
 	public String toString() {
-		return "SAOTuple [S=" + subject + ", A=" + predicate + ", O=" + object
+		return "SaoTuple [S=" + subject + ", A=" + predicate + ", O=" + object
 		    + "]";
 	}
 

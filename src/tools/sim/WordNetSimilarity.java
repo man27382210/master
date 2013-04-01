@@ -1,7 +1,7 @@
 package tools.sim;
 
 import item.Patent;
-import item.SAOTuple;
+import item.SaoTuple;
 import java.util.List;
 import org.apache.log4j.Logger;
 import edu.sussex.nlp.jws.JWS;

@@ -1,6 +1,6 @@
 package tools.nlp;
 
-import item.SAOTuple;
+import item.SaoTuple;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -53,9 +53,9 @@ public class SAOExtractor {
 	}
 
 	// get all sao list in a paragraph
-	public List<SAOTuple> getSAOTupleList(String paragraph) throws IOException {
+	public List<SaoTuple> getSAOTupleList(String paragraph) throws IOException {
 		List<String> sentList = splitParagraph(paragraph);
-		List<SAOTuple> tupleList = new ArrayList<SAOTuple>();
+		List<SaoTuple> tupleList = new ArrayList<SaoTuple>();
 
 		logger.debug("Found sentences : " + sentList.size());
 		int count = 1;
@@ -90,9 +90,9 @@ public class SAOExtractor {
 	}
 
 	// get sao list in a sentence
-	private List<SAOTuple> getSAOTupleListBySentence(String sent)
+	private List<SaoTuple> getSAOTupleListBySentence(String sent)
 	    throws IOException {
-		List<SAOTuple> saoTupleList = new ArrayList<SAOTuple>();
+		List<SaoTuple> saoTupleList = new ArrayList<SaoTuple>();
 		// create the parse structure
 		Tree parse = parser.parse(sent);
 		List<TypedDependency> tdl = gsf.newGrammaticalStructure(parse)
@@ -115,7 +115,7 @@ public class SAOExtractor {
 						if (remover.matchFilter(object.nodeString()))
 							continue;
 						if (predicate.equals(predicate2)) {
-							SAOTuple tuple = new SAOTuple(new String(subject.nodeString()),
+							SaoTuple tuple = new SaoTuple(new String(subject.nodeString()),
 							    new String(predicate.nodeString()), new String(object.nodeString()));
 							logger.debug(tuple.toString());
 							saoTupleList.add(tuple);

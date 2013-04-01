@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/activejdbc-1.4.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.7.5/slf4j-simple-1.7.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.7.5/slf4j-api-1.7.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/javalite-common-1.4.6.jar"/>
+	<classpathentry kind="lib" path="lib/activejdbc-instrumentation-1.4.7-20130314.132924-74.jar"/>
+	<classpathentry kind="lib" path="lib/javassist.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/database"/>
@@ -16,8 +22,8 @@
 	<classpathentry kind="lib" path="lib/opennlp/opennlp-tools-1.5.2-incubating.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-4.2.0/core/lucene-core-4.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-4.2.0/queries/lucene-queries-4.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-4.2.0/queryparser/lucene-queryparser-4.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-4.2.0/analysis/common/lucene-analyzers-common-4.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-4.2.0/queryparser/lucene-queryparser-4.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-4.2.0/codecs/lucene-codecs-4.2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
