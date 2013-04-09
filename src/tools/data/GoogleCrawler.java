@@ -104,7 +104,7 @@ public class GoogleCrawler {
 	}
 
 	private String parseClaims(Element e) {
-		String clm = e.select("div[class=patent-section patent-claims-section] div[class=patent-text]").text();
+		String clm = e.select("div[class=patent-section patent-claims-section] div[class=patent-text] div[class=claim]").text();
 		System.out.println("clm :　" + clm);
 		return clm;
 

@@ -89,14 +89,113 @@ public class SAOExtractor {
 		return sentenceList;
 	}
 
+	public static void main(String[] args) {
+		SAOExtractor extractor = SAOExtractor.getInstance();
+		String s = "The white oil LA man has been killed by the LA police.";
+		extractor.getSAOTupleListBySentence(s);
+	}
+
+	public List<SaoTuple> getSAOTupleListBySentence(String sent) {
+		List<SaoTuple> list = new ArrayList<SaoTuple>();
+		Tree parse = parser.parse(sent);
+		List<TypedDependency> subjectTdList = new ArrayList<TypedDependency>();
+		List<TypedDependency> objectTdList = new ArrayList<TypedDependency>();
+		List<TypedDependency> modifierTdList = new ArrayList<TypedDependency>();
+		// System.out.println(gsf.newGrammaticalStructure(parse).typedDependenciesCCprocessed());
+
+		for (TypedDependency td : gsf.newGrammaticalStructure(parse).typedDependenciesCCprocessed()) {
+			// System.out.println(td.toString());
+
+			if (isSubjectTd(td)) {
+				subjectTdList.add(td);
+			} else if (isObjectTd(td)) {
+				objectTdList.add(td);
+			} else if (isModifierTd(td)) {
+				modifierTdList.add(td);
+			}
+		}
+
+		for (TypedDependency std : subjectTdList) {
+			for (TypedDependency otd : objectTdList) {
+				if (std.gov().equals(otd.gov())) {
+					String subject = std.dep().nodeString();
+					String predicate = std.gov().nodeString();
+					String object = otd.dep().nodeString();
+					// System.out.println(subject + "-" + predicate + "-" + object);
+
+					// search from end to start
+					for (int i = modifierTdList.size() - 1; i >= 0; i--) {
+						TypedDependency mtd = modifierTdList.get(i);
+						if (getName(mtd).equals("nn")) {
+							if (std.dep().equals(mtd.gov())) {
+								subject = mtd.dep().nodeString() + " " + subject;
+								// System.out.println(subject + "-" + predicate + "-" + object);
+							} else if (otd.dep().equals(mtd.gov())) {
+								object = mtd.dep().nodeString() + " " + object;
+								// System.out.println(subject + "-" + predicate + "-" + object);
+							}
+						} else if (getName(mtd).equals("amod")) {
+							if (std.dep().equals(mtd.gov())) {
+								subject = mtd.dep().nodeString() + " " + subject;
+								// System.out.println(subject + "-" + predicate + "-" + object);
+							} else if (otd.dep().equals(mtd.gov())) {
+								object = mtd.dep().nodeString() + " " + object;
+								// System.out.println(subject + "-" + predicate + "-" + object);
+							}
+						}
+					}
+					// System.out.println(sent);
+					System.out.println(subject + " <=> " + predicate + " <=> " + object);
+
+					SaoTuple t = new SaoTuple();
+					t.set("subject", subject);
+					t.set("object", object);
+					t.set("predicate", predicate);
+					t.set("sentence", sent);
+					list.add(t);
+				}
+			}
+		}
+
+		return list;
+	}
+
+	private boolean isSubjectTd(TypedDependency td) {
+		List<String> list = Arrays.asList(new String[] { "nsubj", "xsubj", "agent" });
+		String name = getName(td);
+		if (list.contains(name)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private boolean isObjectTd(TypedDependency td) {
+		List<String> list = Arrays.asList(new String[] { "dobj", "iobj", "nsubjpass" });
+		String name = getName(td);
+		if (list.contains(name) || name.contains("prep_")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private boolean isModifierTd(TypedDependency td) {
+		List<String> list = Arrays.asList(new String[] { "nn", "amod" });
+		String name = getName(td);
+		if (list.contains(name)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	// get sao list in a sentence
-	private List<SaoTuple> getSAOTupleListBySentence(String sent)
-	    throws IOException {
+	private List<SaoTuple> old_getSAOTupleListBySentence(String sent) throws IOException {
 		List<SaoTuple> saoTupleList = new ArrayList<SaoTuple>();
 		// create the parse structure
 		Tree parse = parser.parse(sent);
-		List<TypedDependency> tdl = gsf.newGrammaticalStructure(parse)
-		    .typedDependenciesCCprocessed();
+		List<TypedDependency> tdl = gsf.newGrammaticalStructure(parse).typedDependenciesCCprocessed();
 
 		StopWordRemover remover = StopWordRemover.getInstance();
 		for (TypedDependency td : tdl) {
@@ -105,8 +204,7 @@ public class SAOExtractor {
 				TreeGraphNode subject = td.dep();
 				TreeGraphNode predicate = td.gov();
 				// match stopword
-				if (remover.matchFilter(subject.nodeString())
-				    || remover.matchFilter(predicate.nodeString()))
+				if (remover.matchFilter(subject.nodeString()) || remover.matchFilter(predicate.nodeString()))
 					continue;
 				for (TypedDependency td2 : tdl) {
 					if (objectTd.contains(getName(td2))) {
@@ -117,9 +215,9 @@ public class SAOExtractor {
 						if (predicate.equals(predicate2)) {
 							SaoTuple tuple = new SaoTuple();
 							tuple.set("sentence", sent);
-							tuple.set("subject",new String(subject.nodeString()));
-							tuple.set("predicate",new String(predicate.nodeString()));
-							tuple.set("object",new String(object.nodeString()));
+							tuple.set("subject", new String(subject.nodeString()));
+							tuple.set("predicate", new String(predicate.nodeString()));
+							tuple.set("object", new String(object.nodeString()));
 							logger.debug(tuple.toString());
 							saoTupleList.add(tuple);
 						}

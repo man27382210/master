@@ -69,8 +69,8 @@ public class MainController {
 	public static void main(String[] args) {
 		
 		try {
-		  // savePatentUSPTO()
-			// savePatentGoogle()
+		  // savePatentUSPTO();
+			// savePatentGoogle();
 			 saveSAOTuple();
 			// lemmatizeSAOTuple();
 			// other();
@@ -108,10 +108,10 @@ public class MainController {
 		List<Patent> patents = Patent.where("dataset = 'dataset1'");
 		SAOExtractor extractor = SAOExtractor.getInstance();
 		for (Patent p : patents) {
-			String id = (String) p.get("id");
+			String id = p.getString("id");
 			System.out.println("save sao into db : " + id);
-			String claims = (String) p.get("claims");
-			List<SaoTuple> tuples = extractor.getSAOTupleList(claims);
+			String content = p.getString("abstract") + p.getString("claims") + p.getString("description");
+			List<SaoTuple> tuples = extractor.getSAOTupleList(content);
 			int count = 0;
 
 			for (SaoTuple t : tuples) {
@@ -157,7 +157,6 @@ public class MainController {
 		DBManager mgr = DBManager.getInstance();
 		mgr.open();
 		GoogleCrawler crawler = GoogleCrawler.getInstance();
-		crawler.crawl("5234091");
 		for (String id : idList) {
 			// exist patent then skip
 			if (Patent.findById("US" + id) != null)
