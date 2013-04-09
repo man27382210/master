@@ -44,7 +44,7 @@ public class SAOExtractor {
 		parser = StanfordParser.getInstance();
 		gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
 		subjectTd = Arrays.asList(new String[] { "nsubj", "nsubjpass", "xsubj" });
-		objectTd = Arrays.asList(new String[] { "dobj", "iobj", "pobj", "prep" });
+		objectTd = Arrays.asList(new String[] { "dobj", "iobj", "pobj", "prep_" });
 		logger = Logger.getLogger(this.getClass().getSimpleName());
 	}
 
@@ -115,8 +115,11 @@ public class SAOExtractor {
 						if (remover.matchFilter(object.nodeString()))
 							continue;
 						if (predicate.equals(predicate2)) {
-							SaoTuple tuple = new SaoTuple(new String(subject.nodeString()),
-							    new String(predicate.nodeString()), new String(object.nodeString()));
+							SaoTuple tuple = new SaoTuple();
+							tuple.set("sentence", sent);
+							tuple.set("subject",new String(subject.nodeString()));
+							tuple.set("predicate",new String(predicate.nodeString()));
+							tuple.set("object",new String(object.nodeString()));
 							logger.debug(tuple.toString());
 							saoTupleList.add(tuple);
 						}

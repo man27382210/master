@@ -32,7 +32,7 @@ public class SAOFilter {
 		List<SaoTuple> list = patent.getSaoTupleList();
 		SAOTupleComparator comparator = new SAOTupleComparator();
 		Collections.sort(list, comparator);
-		//list = list.subList(list.size() - 6, list.size() - 1);
+		list = list.subList(list.size() - 6, list.size() - 1);
 		patent.setSaoTupleList(list);
 	}
 
@@ -41,7 +41,7 @@ public class SAOFilter {
 		public int compare(Object arg0, Object arg1) {
 			SaoTuple t1 = (SaoTuple) arg0;
 			SaoTuple t2 = (SaoTuple) arg1;
-			String id = patent.getId();
+			String id = (String) patent.get("patent_id");
 
 			double v1 = ranker.getTFIDF(id, t1.getSubject())
 					+ ranker.getTFIDF(id, t1.getPredicate())

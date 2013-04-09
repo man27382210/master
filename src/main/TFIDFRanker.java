@@ -28,8 +28,6 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
 
-import tools.data.FileManager;
-
 import item.Patent;
 import item.SaoTuple;
 
@@ -100,8 +98,8 @@ public class TFIDFRanker {
 		IndexWriter w = new IndexWriter(index, config);
 
 		for (Patent p : list) {
-			String id = p.getId();
-			String content = p.getFullText();
+			String id = p.getString("patent_id");
+			String content = p.getString("abstract") + p.getString("claims") + p.getString("description");
 			addDoc(w, id, content);
 		}
 		w.close();

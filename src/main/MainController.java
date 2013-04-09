@@ -8,16 +8,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import tools.data.DBManager;
-import tools.data.FileManager;
 import tools.data.GoogleCrawler;
 import tools.data.PatentFetcher;
 import tools.data.USPTOCrawler;
 import tools.nlp.SAOExtractor;
 import tools.nlp.SAOFilter;
+import tools.nlp.StanfordLemmatizer;
 import tools.nlp.Stemmer;
 import tools.sim.WordNetSimilarity;
 
@@ -25,48 +26,78 @@ public class MainController {
 
 	private static Logger logger = Logger.getLogger("Main");
 
-	public static void other() {
-		try {
-			FileManager mgr = new FileManager();
-			List<Patent> list = (List<Patent>) mgr
-			    .readObjectFromFile("data/dataset1-alltuple.txt");
-			TFIDFRanker ranker = TFIDFRanker.getInstance();
-			ranker.load(list);
+	public static void other() throws FileNotFoundException, IOException {
 
-			SAOFilter filter = SAOFilter.getInstance();
-			for (Patent p : list) {
-				System.out.println(p.getSaoTupleList());
-				filter.filterSAOTupleList(p);
-				System.out.println(p.getSaoTupleList());
+		MakeInstrumentationUtil.make();
+		DBManager mgr = DBManager.getInstance();
+		mgr.open();
+		List<Patent> patents = Patent.where("dataset = 'dataset1'");
+		for (Patent p : patents) {
+			String id = (String) p.get("id");
+			p.setId(id);
+			List<SaoTuple> tuples = SaoTuple.where("patent_id = '" + p.get("id") + "'");
+			for (SaoTuple t : tuples) {
+				t.setSubject((String) t.get("subject"));
+				t.setPredicate((String) t.get("predicate"));
+				t.setObject((String) t.get("object"));
 			}
-
-			Stemmer stemmer = Stemmer.getInstance();
-			stemmer.stem(list);
-
-			PatentMapGenerator g = new PatentMapGenerator();
-			g.getPatentMap(list);
-
-			WordNetSimilarity w = WordNetSimilarity.getInstance();
-			System.out.println("zero = " + w.zero);
-			System.out.println("non-zero = " + w.nzero);
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			p.setSaoTupleList(tuples);
 		}
+
+		TFIDFRanker ranker = TFIDFRanker.getInstance();
+		ranker.load(patents);
+
+		SAOFilter filter = SAOFilter.getInstance();
+		for (Patent p : patents) {
+			System.out.println(p.getSaoTupleList());
+			filter.filterSAOTupleList(p);
+			System.out.println(p.getSaoTupleList());
+		}
+
+		Stemmer stemmer = Stemmer.getInstance();
+		stemmer.stem(patents);
+
+		PatentMapGenerator g = new PatentMapGenerator();
+		g.getPatentMap(patents);
+
+		WordNetSimilarity w = WordNetSimilarity.getInstance();
+		System.out.println("zero = " + w.zero);
+		System.out.println("non-zero = " + w.nzero);
+
 	}
 
 	public static void main(String[] args) {
+		
 		try {
-			// savePatent()
-			saveSAOTuple();
+		  // savePatentUSPTO()
+			// savePatentGoogle()
+			 saveSAOTuple();
+			// lemmatizeSAOTuple();
 			// other();
 
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+
+	}
+
+	public static void lemmatizeSAOTuple() throws FileNotFoundException, IOException {
+		MakeInstrumentationUtil.make();
+		DBManager mgr = DBManager.getInstance();
+		mgr.open();
+		List<SaoTuple> tuples = SaoTuple.findAll();
+
+		StanfordLemmatizer lemmatizer = StanfordLemmatizer.getInstance();
+
+		for (SaoTuple t : tuples) {
+			t.set("subject", lemmatizer.getLemma((String) t.get("subject")));
+			t.set("predicate", lemmatizer.getLemma((String) t.get("predicate")));
+			t.set("object", lemmatizer.getLemma((String) t.get("object")));
+			t.saveIt();
 		}
 	}
 
@@ -74,27 +105,25 @@ public class MainController {
 		MakeInstrumentationUtil.make();
 		DBManager mgr = DBManager.getInstance();
 		mgr.open();
-		List<Patent> patents = Patent.where("remark = 'dataset1'");
+		List<Patent> patents = Patent.where("dataset = 'dataset1'");
 		SAOExtractor extractor = SAOExtractor.getInstance();
 		for (Patent p : patents) {
 			String id = (String) p.get("id");
 			System.out.println("save sao into db : " + id);
-			String fullText = (String) p.get("full_text");
-			List<SaoTuple> tuples = extractor.getSAOTupleList(fullText);
+			String claims = (String) p.get("claims");
+			List<SaoTuple> tuples = extractor.getSAOTupleList(claims);
 			int count = 0;
+
 			for (SaoTuple t : tuples) {
 				System.out.println("sao number : " + ++count);
 				t.set("patent_id", id);
-				t.set("subject", t.getSubject());
-				t.set("predicate", t.getPredicate());
-				t.set("object", t.getObject());
 				t.insert();
 			}
 		}
 		mgr.close();
 	}
 
-	public static void savePatent() throws IOException {
+	public static void savePatentUSPTO() throws IOException {
 		MakeInstrumentationUtil.make();
 
 		PatentFetcher fetcher = new PatentFetcher();
@@ -117,5 +146,27 @@ public class MainController {
 			p.insert();
 		}
 		mgr.close();
+	}
+
+	public static void savePatentGoogle() throws IOException {
+
+		MakeInstrumentationUtil.make();
+		PatentFetcher fetcher = new PatentFetcher();
+		List<String> idList = fetcher.fetchPatentByFile("doc/dataset1.txt");
+
+		DBManager mgr = DBManager.getInstance();
+		mgr.open();
+		GoogleCrawler crawler = GoogleCrawler.getInstance();
+		crawler.crawl("5234091");
+		for (String id : idList) {
+			// exist patent then skip
+			if (Patent.findById("US" + id) != null)
+				continue;
+			System.out.println("crawl patent : " + id);
+			crawler.insert(id);
+		}
+
+		mgr.close();
+
 	}
 }

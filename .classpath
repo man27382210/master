@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="lib/activejdbc-1.4.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.7.5/slf4j-simple-1.7.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-1.7.5/slf4j-api-1.7.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/javalite-common-1.4.6.jar"/>
-	<classpathentry kind="lib" path="lib/activejdbc-instrumentation-1.4.7-20130314.132924-74.jar"/>
-	<classpathentry kind="lib" path="lib/javassist.jar"/>
+	<classpathentry kind="lib" path="lib/stanford-corenlp-full-2012-11-12/stanford-corenlp-1.3.4.jar"/>
+	<classpathentry kind="lib" path="lib/stanford-corenlp-full-2012-11-12/xom.jar"/>
+	<classpathentry kind="lib" path="lib/stanford-corenlp-full-2012-11-12/stanford-corenlp-1.3.4-models.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/database"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/java-wordnet"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jfreechart"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/log4j"/>
@@ -25,5 +23,10 @@
 	<classpathentry kind="lib" path="lib/lucene-4.2.0/analysis/common/lucene-analyzers-common-4.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-4.2.0/queryparser/lucene-queryparser-4.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-4.2.0/codecs/lucene-codecs-4.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/activejdbc/activejdbc-1.4.6.jar"/>
+	<classpathentry kind="lib" path="lib/activejdbc/activejdbc-instrumentation-1.4.7-20130314.132924-74.jar"/>
+	<classpathentry kind="lib" path="lib/activejdbc/javalite-common-1.4.6.jar"/>
+	<classpathentry kind="lib" path="lib/activejdbc/javassist.jar"/>
+	<classpathentry kind="lib" path="lib/activejdbc/mysql-connector-java-5.1.23-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
