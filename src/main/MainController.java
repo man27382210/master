@@ -71,9 +71,9 @@ public class MainController {
 		try {
 		  // savePatentUSPTO();
 			// savePatentGoogle();
-			 saveSAOTuple();
+			// saveSAOTuple();
 			// lemmatizeSAOTuple();
-			// other();
+			other();
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

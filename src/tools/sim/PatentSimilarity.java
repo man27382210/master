@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PatentSimilarity {
 	private static PatentSimilarity instance = null;
-	private String similarityType = "google1";
+	private String similarityType = "google";
 	private GoogleSimilarity gsim = GoogleSimilarity.getInstance();
 	private WordNetSimilarity wsim = WordNetSimilarity.getInstance();
 

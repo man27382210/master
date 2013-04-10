@@ -32,7 +32,7 @@ public class SAOFilter {
 		List<SaoTuple> list = patent.getSaoTupleList();
 		SAOTupleComparator comparator = new SAOTupleComparator();
 		Collections.sort(list, comparator);
-		list = list.subList(list.size() - 6, list.size() - 1);
+		if (list.size() > 5) list = list.subList(list.size() - 5, list.size());
 		patent.setSaoTupleList(list);
 	}
 
