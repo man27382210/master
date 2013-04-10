@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PatentSimilarity {
 	private static PatentSimilarity instance = null;
-	private String similarityType = "google";
+	private String similarityType = "wordnet";
 	private GoogleSimilarity gsim = GoogleSimilarity.getInstance();
 	private WordNetSimilarity wsim = WordNetSimilarity.getInstance();
 
@@ -24,7 +24,10 @@ public class PatentSimilarity {
 		if (similarityType.equals("google")) {
 			return gsim.getGoogleDistance(w1, w2);
 		} else {
-			return wsim.getSim(w1, w2, type);
+			System.out.println(w1 + " <=> " + w2 + " (" + type + ") : ");
+			double value = wsim.getSim(w1, w2, type);
+			System.out.println(w1 + " <=> " + w2 + " (" + type + ") : " + value);
+			return value;
 		}
 	}
 

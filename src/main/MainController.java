@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import tools.data.DBManager;
 import tools.data.GoogleCrawler;
 import tools.data.PatentFetcher;
@@ -24,8 +22,6 @@ import tools.sim.WordNetSimilarity;
 
 public class MainController {
 
-	private static Logger logger = Logger.getLogger("Main");
-
 	public static void other() throws FileNotFoundException, IOException {
 
 		MakeInstrumentationUtil.make();
@@ -33,13 +29,12 @@ public class MainController {
 		mgr.open();
 		List<Patent> patents = Patent.where("dataset = 'dataset1'");
 		for (Patent p : patents) {
-			String id = (String) p.get("id");
-			p.setId(id);
-			List<SaoTuple> tuples = SaoTuple.where("patent_id = '" + p.get("id") + "'");
+			String id = p.getString("id");
+			List<SaoTuple> tuples = SaoTuple.where("patent_id = '" + id + "' and remark = 'single'");
 			for (SaoTuple t : tuples) {
-				t.setSubject((String) t.get("subject"));
-				t.setPredicate((String) t.get("predicate"));
-				t.setObject((String) t.get("object"));
+				t.setSubject(t.getString("subject"));
+				t.setPredicate(t.getString("predicate"));
+				t.setObject(t.getString("object"));
 			}
 			p.setSaoTupleList(tuples);
 		}
@@ -54,8 +49,8 @@ public class MainController {
 			System.out.println(p.getSaoTupleList());
 		}
 
-		Stemmer stemmer = Stemmer.getInstance();
-		stemmer.stem(patents);
+//		Stemmer stemmer = Stemmer.getInstance();
+//		stemmer.stem(patents);
 
 		PatentMapGenerator g = new PatentMapGenerator();
 		g.getPatentMap(patents);
@@ -67,11 +62,12 @@ public class MainController {
 	}
 
 	public static void main(String[] args) {
-		
+
 		try {
-		  // savePatentUSPTO();
+			// savePatentUSPTO();
 			// savePatentGoogle();
-			// saveSAOTuple();
+			// saveSAOTupleForMultiWord();
+			// saveSAOTupleForSingleWord();
 			// lemmatizeSAOTuple();
 			other();
 
@@ -101,7 +97,7 @@ public class MainController {
 		}
 	}
 
-	public static void saveSAOTuple() throws FileNotFoundException, IOException {
+	public static void saveSAOTupleForSingleWord() throws FileNotFoundException, IOException {
 		MakeInstrumentationUtil.make();
 		DBManager mgr = DBManager.getInstance();
 		mgr.open();
@@ -117,6 +113,30 @@ public class MainController {
 			for (SaoTuple t : tuples) {
 				System.out.println("sao number : " + ++count);
 				t.set("patent_id", id);
+				t.set("remark", "single");
+				t.insert();
+			}
+		}
+		mgr.close();
+	}
+
+	public static void saveSAOTupleForMultiWord() throws FileNotFoundException, IOException {
+		MakeInstrumentationUtil.make();
+		DBManager mgr = DBManager.getInstance();
+		mgr.open();
+		List<Patent> patents = Patent.where("dataset = 'dataset1'");
+		SAOExtractor extractor = SAOExtractor.getInstance();
+		for (Patent p : patents) {
+			String id = p.getString("id");
+			System.out.println("save sao into db : " + id);
+			String content = p.getString("abstract") + p.getString("claims") + p.getString("description");
+			List<SaoTuple> tuples = extractor.getSAOTupleList(content);
+			int count = 0;
+
+			for (SaoTuple t : tuples) {
+				System.out.println("sao number : " + ++count);
+				t.set("patent_id", id);
+				t.set("remark", "multiple");
 				t.insert();
 			}
 		}
