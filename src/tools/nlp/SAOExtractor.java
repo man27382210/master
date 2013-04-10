@@ -1,7 +1,9 @@
 package tools.nlp;
 
+import item.MakeInstrumentationUtil;
 import item.SaoTuple;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -12,6 +14,8 @@ import java.util.List;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+
+import tools.data.DBManager;
 
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.process.DocumentPreprocessor;
@@ -89,14 +93,29 @@ public class SAOExtractor {
 		return sentenceList;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException, IOException {
+		MakeInstrumentationUtil.make();
+		DBManager mgr = DBManager.getInstance();
+		mgr.open();
 		SAOExtractor extractor = SAOExtractor.getInstance();
-		String s = "The white oil LA man has been killed by the LA police.";
+		String s = "The third main drive shaft 21 is rotatably supported by bearings 27 and 28 and provided with a hypoid pinion 30 formed at the front end thereof .";
+		
+		String reg = "(\\s[0-9]*[1-9][0-9]*[a-zA-Z]?\\s)(,\\s[0-9]*[1-9][0-9]*[a-zA-Z]?\\s)*((and|or)\\s[0-9]*[1-9][0-9]*[a-zA-Z]?\\s)*";
+		s = s.replaceAll(reg,"");
 		extractor.getSAOTupleListBySentence(s);
+		mgr.close();
 	}
 
-	public List<SaoTuple> getSAOTupleListBySentence(String sent) {
+	private String regexSentence(String sent) {
+		String reg = "((\\d+\\w?\\s?,\\s?)*(\\d+\\w?\\s?(and|or)\\s?\\d+\\w?))|(\\d+\\w?\\s?(and|or)\\s?\\d+\\w?)|(\\d+\\w?\\s)";
+		return sent.replaceAll(reg," ");
+		//String reg2 = "((\d+\w?\s?,\s?)*(\d+\w?\s?(and|or)\s?\d+\w?))|(\d\w?+\s?(and|or)\s?\d\w?+)|(\d+\w?)";
+	}
+	
+	public List<SaoTuple> getSAOTupleListBySentence(String sent) throws IOException {
 		List<SaoTuple> list = new ArrayList<SaoTuple>();
+		String origin_sent = new String(sent);
+		sent = regexSentence(sent);
 		Tree parse = parser.parse(sent);
 		List<TypedDependency> subjectTdList = new ArrayList<TypedDependency>();
 		List<TypedDependency> objectTdList = new ArrayList<TypedDependency>();
@@ -115,6 +134,8 @@ public class SAOExtractor {
 			}
 		}
 
+		StopWordRemover remover = StopWordRemover.getInstance();
+		
 		for (TypedDependency std : subjectTdList) {
 			for (TypedDependency otd : objectTdList) {
 				if (std.gov().equals(otd.gov())) {
@@ -145,13 +166,14 @@ public class SAOExtractor {
 						}
 					}
 					// System.out.println(sent);
+					if (remover.matchFilter(subject) || remover.matchFilter(predicate) || remover.matchFilter(object) ) continue;
 					System.out.println(subject + " <=> " + predicate + " <=> " + object);
 
 					SaoTuple t = new SaoTuple();
 					t.set("subject", subject);
 					t.set("object", object);
 					t.set("predicate", predicate);
-					t.set("sentence", sent);
+					t.set("sentence", origin_sent);
 					list.add(t);
 				}
 			}

@@ -33,15 +33,19 @@ public class StopWordRemover {
 	}
 
 	private boolean isAlphabetStr(String word) {
-		return word.matches("^[A-Za-z]+$");
+		return word.matches(".*[a-zA-Z]+.*");
 	}
 	
 	private boolean isGeneral(String word) {
 		return generalWordList.contains(word);
 	}
 	
+	private boolean isOverflow(String word) {
+		return (word.length() > 50);
+	}
+	
 	public boolean matchFilter(String word) {
-		return (isStopWord(word) || !isAlphabetStr(word) || isGeneral(word));
+		return (isStopWord(word) || !isAlphabetStr(word) || isGeneral(word) || isOverflow(word));
 	}
 	
 	private void loadStopWord() throws IOException {
