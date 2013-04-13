@@ -97,16 +97,12 @@ public class TFIDFRanker {
 		addDoc(w, "p01", "I love young man.");
 		addDoc(w, "p02", "you love young girl.");
 		addDoc(w, "p03", "I dont love young man, and I love you.");
-		
-		
+
 		w.close();
 		IndexReader reader = DirectoryReader.open(index);
 		setIdMap(reader);
 		setTermFreqMap(reader);
 		setDocLengthMap();
-		
-		FieldInvertState fis = new FieldInvertState("content"); 
-		System.out.println(fis.getLength());
 		
 		System.out.println(idMap.toString());
 		System.out.println(termFreqMap.toString());
