@@ -20,25 +20,23 @@ public class PatentSimilarity {
 	}
 
 	private double getWordSim(String w1, String w2, String type)
-			throws IOException {
+			throws IOException, InterruptedException {
 		if (similarityType.equals("google")) {
 			return gsim.getGoogleDistance(w1, w2);
 		} else {
-			System.out.println(w1 + " <=> " + w2 + " (" + type + ") : ");
 			double value = wsim.getSim(w1, w2, type);
-			System.out.println(w1 + " <=> " + w2 + " (" + type + ") : " + value);
 			return value;
 		}
 	}
 
-	private double getPairTupleSim(SaoTuple t1, SaoTuple t2) throws IOException {
-		double s1 = getWordSim(t1.getSubject(), t2.getSubject(), "n");
-		double s2 = getWordSim(t1.getPredicate(), t2.getPredicate(), "v");
-		double s3 = getWordSim(t1.getObject(), t2.getObject(), "n");
+	private double getPairTupleSim(SaoTuple t1, SaoTuple t2) throws IOException, InterruptedException {
+		double s1 = getWordSim(t1.getString("subject"), t2.getString("subject"), "n");
+		double s2 = getWordSim(t1.getString("predicate"), t2.getString("predicate"), "v");
+		double s3 = getWordSim(t1.getString("object"), t2.getString("object"), "n");
 		return (s1 + s2 + s3) / 3.0;
 	}
 
-	public double getPatentDissim(Patent p1, Patent p2) throws IOException {
+	public double getPatentDissim(Patent p1, Patent p2) throws IOException, InterruptedException {
 		List<SaoTuple> l1 = p1.getSaoTupleList();
 		List<SaoTuple> l2 = p2.getSaoTupleList();
 		double total1 = 0, total2 = 0;
@@ -65,6 +63,8 @@ public class PatentSimilarity {
 			total2 = total2 + max;
 		}
 
+		//System.out.println(total1);
+		
 		double sim = ((total1 / l1.size()) + (total2 / l2.size())) /2 ;
 
 		return 1 - sim;

@@ -32,7 +32,10 @@ public class SAOFilter {
 		List<SaoTuple> list = patent.getSaoTupleList();
 		SAOTupleComparator comparator = new SAOTupleComparator();
 		Collections.sort(list, comparator);
-		if (list.size() > 5) list = list.subList(list.size() - 5, list.size());
+		for(SaoTuple t :list) {
+			System.out.println(ranker.getTFIDF(patent.getString("id"), t) + " TFIDF:" + t.toString());
+		}
+		if (list.size() > 5) list = list.subList(0,5);
 		patent.setSaoTupleList(list);
 	}
 
@@ -43,19 +46,19 @@ public class SAOFilter {
 			SaoTuple t2 = (SaoTuple) arg1;
 			String id = (String) patent.get("patent_id");
 
-			double v1 = ranker.getTFIDF(id, t1.getSubject())
-					+ ranker.getTFIDF(id, t1.getPredicate())
-					+ ranker.getTFIDF(id, t1.getObject());
+			double v1 = ranker.getTFIDF(id, t1.getString("subject"))
+					+ ranker.getTFIDF(id, t1.getString("predicate"))
+					+ ranker.getTFIDF(id, t1.getString("object"));
 
-			double v2 = ranker.getTFIDF(id, t2.getSubject())
-					+ ranker.getTFIDF(id, t2.getPredicate())
-					+ ranker.getTFIDF(id, t2.getObject());
+			double v2 = ranker.getTFIDF(id, t2.getString("subject"))
+					+ ranker.getTFIDF(id, t2.getString("predicate"))
+					+ ranker.getTFIDF(id, t2.getString("object"));
 
 			Double d1 = new Double(v1);
 			Double d2 = new Double(v2);
 
-			// System.out.println(d1 + t1.toString());
-			// System.out.println(d2 + t2.toString());
+			//System.out.println(d1 + " " + t1.toString());
+			//System.out.println(d2 + " " + t2.toString());
 
 			return d2.compareTo(d1);
 		}

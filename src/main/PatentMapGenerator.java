@@ -26,7 +26,7 @@ import tools.sim.WordNetSimilarity;
 
 public class PatentMapGenerator {
 
-	public void getPatentMap(List<Patent> list) throws IOException {
+	public void getPatentMap(List<Patent> list) throws IOException, InterruptedException {
 		int size = list.size();
 		PatentSimilarity sim = PatentSimilarity.getInstance();
 		double[][] input = new double[size][size];
@@ -44,9 +44,7 @@ public class PatentMapGenerator {
 					continue;
 				} else {
 					input[x][y] = sim.getPatentDissim(p1, p2);
-					System.out.println("Fetching sim between " + p1.getId() + " and "
-					    + p2.getId() + " : " + input[x][y]);
-
+					System.out.println("Fetching sim between " + p1.getId() + " and " + p2.getId() + " : " + input[x][y]);
 					y++;
 				}
 			}
@@ -70,8 +68,7 @@ public class PatentMapGenerator {
 			dataset.addSeries(serie);
 		}
 
-		JFreeChart chart = ChartFactory.createScatterPlot(null, null, null,
-		    dataset, PlotOrientation.VERTICAL, true, true, false);
+		JFreeChart chart = ChartFactory.createScatterPlot(null, null, null, dataset, PlotOrientation.VERTICAL, true, true, false);
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setDomainZeroBaselineVisible(true);
 		plot.setRangeZeroBaselineVisible(true);

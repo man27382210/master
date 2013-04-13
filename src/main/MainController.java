@@ -17,12 +17,11 @@ import tools.data.USPTOCrawler;
 import tools.nlp.SAOExtractor;
 import tools.nlp.SAOFilter;
 import tools.nlp.StanfordLemmatizer;
-import tools.nlp.Stemmer;
 import tools.sim.WordNetSimilarity;
 
 public class MainController {
 
-	public static void other() throws FileNotFoundException, IOException {
+	public static void other() throws FileNotFoundException, IOException, InterruptedException {
 
 		MakeInstrumentationUtil.make();
 		DBManager mgr = DBManager.getInstance();
@@ -31,14 +30,11 @@ public class MainController {
 		for (Patent p : patents) {
 			String id = p.getString("id");
 			List<SaoTuple> tuples = SaoTuple.where("patent_id = '" + id + "' and remark = 'single'");
-			for (SaoTuple t : tuples) {
-				t.setSubject(t.getString("subject"));
-				t.setPredicate(t.getString("predicate"));
-				t.setObject(t.getString("object"));
-			}
 			p.setSaoTupleList(tuples);
 		}
 
+		patents = patents.subList(0, 2);
+		
 		TFIDFRanker ranker = TFIDFRanker.getInstance();
 		ranker.load(patents);
 
@@ -52,6 +48,8 @@ public class MainController {
 //		Stemmer stemmer = Stemmer.getInstance();
 //		stemmer.stem(patents);
 
+		//patents = patents.subList(0, 3);
+		
 		PatentMapGenerator g = new PatentMapGenerator();
 		g.getPatentMap(patents);
 
@@ -77,7 +75,10 @@ public class MainController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} catch (InterruptedException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+    }
 
 	}
 
