@@ -24,7 +24,7 @@ public class DBManager {
 	private String url;
 	private String user;
 	private String password;
-
+	
 	private DBManager() throws FileNotFoundException, IOException {
 		loadProperties();
 		driver = getConfig("driver");
@@ -51,6 +51,13 @@ public class DBManager {
 		return props.getProperty(key);
 	}
 
+	public void setConfig(String driver,String url, String user, String password) {
+		this.driver = driver;
+		this.url = url;
+		this.user = user;
+		this.password = password;
+	}
+	
 	public void open() {
 		Base.open(driver, url, user, password);
 	}
@@ -58,5 +65,20 @@ public class DBManager {
 	public void close() {
 		Base.close();
 	}
+	
+	public int exec(String query, Object params){
+		return Base.exec(query, params);
+	}
 
+	public int exec(String query){
+		return Base.exec(query);
+	}
+	
+	public long count(String table, String query, Object params){
+		return Base.count(table, query, params);
+	}
+	
+	public long count(String table){
+		return Base.count(table);
+	}
 }
