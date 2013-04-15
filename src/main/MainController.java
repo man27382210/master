@@ -33,7 +33,7 @@ public class MainController {
 			p.setSaoTupleList(tuples);
 		}
 
-		patents = patents.subList(0, 2);
+		//patents = patents.subList(0, 2);
 		
 		TFIDFRanker ranker = TFIDFRanker.getInstance();
 		ranker.load(patents);
