@@ -1,6 +1,5 @@
 package util;
 
-import item.Map;
 import item.Patent;
 import item.SaoTuple;
 
@@ -9,7 +8,10 @@ import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import main.PatentMapGenerator;
 import main.TFIDFRanker;
@@ -44,31 +46,68 @@ public class WekaDemo {
 		MakeInstrumentationUtil.make();
 		DBManager mgr = DBManager.getInstance();
 		mgr.open();
+
 		DatabaseLoader loader = new DatabaseLoader();
 		loader.setSource(mgr.getUrl(), mgr.getUser(), mgr.getPassword());
 		loader.setQuery("select * from patent_map where dataset='dataset1'");
 		Instances data = loader.getDataSet();
-		System.out.println(data.toString());
-	  
+		// System.out.println(data.toString());
+
 		SimpleKMeans km = new SimpleKMeans();
 		km.setMaxIterations(1000);
 		km.setPreserveInstancesOrder(true);
-		km.setNumClusters(5);
-		
+		km.setNumClusters(11);
+
 		FilteredClusterer fc = new FilteredClusterer();
-		
+
 		Remove rm = new Remove();
 		rm.setAttributeIndices("1,4");
 		fc.setFilter(rm);
 		fc.setClusterer(km);
-		
 		fc.buildClusterer(data);
+
+		int[] assignment = km.getAssignments();
+		// System.out.println(assignment[0]);
+
+		Instances centroids = km.getClusterCentroids();
+		System.out.println(centroids.toString());
+
+		Map<Patent, Double> map = new HashMap<Patent, Double>();
+		
+		for (int i = 0; i < km.getNumClusters(); i++) {
+			double cx = centroids.get(i).value(0);
+			double cy = centroids.get(i).value(1);
+
+			for (int j = 0; j < data.size(); j++) {
+				if (i == assignment[j]) {
+					double x = data.get(j).value(1);
+					double y = data.get(j).value(2);
+					double distance = Math.pow(x - cx, 2) + Math.pow(y - cy, 2);
+					String id = data.get(j).stringValue(0);
+					Patent p = Patent.findById(id);
+					map.put(p, distance);
+				}
+			}
+		}
+
+		System.out.println(map);
+
+		ValueComparator bvc = new ValueComparator(map);
+		Map<Patent, Double> sorted_map = new TreeMap<Patent, Double>(bvc);
+
+		System.out.println("unsorted map: " + map);
+		sorted_map.putAll(map);
+		System.out.println("results: " + sorted_map);
+
+		List<Patent> predictedList = new ArrayList<Patent>(map.keySet());
+		
+		PRCurve.draw(predictedList);
+		
 		ClusterEvaluation eval = new ClusterEvaluation();
 		eval.setClusterer(fc);
 		eval.evaluateClusterer(data);
-	
+
 		System.out.println(eval.clusterResultsToString());
-		
 
 		ClustererAssignmentsPlotInstances plotInstances = new ClustererAssignmentsPlotInstances();
 		plotInstances.setClusterer(fc);
@@ -76,95 +115,26 @@ public class WekaDemo {
 		plotInstances.setClusterEvaluation(eval);
 		plotInstances.setUp();
 		PlotData2D dataset = plotInstances.getPlotData("plot name");
-		// generate visualization
-		VisualizePanel visPanel = new VisualizePanel();
-		visPanel.addPlot(dataset);
-		
-		// clean up
-		plotInstances.cleanUp();
 
-		final javax.swing.JFrame jf = new javax.swing.JFrame("Weka Clusterer Visualize: " + "test");
-		jf.setSize(500, 400);
-		jf.getContentPane().setLayout(new BorderLayout());
-		jf.getContentPane().add(visPanel, BorderLayout.CENTER);
-		jf.addWindowListener(new java.awt.event.WindowAdapter() {
-			public void windowClosing(java.awt.event.WindowEvent e) {
-				jf.dispose();
-			}
-		});
-		jf.setVisible(true);
-		
+		System.out.println(plotInstances.getPlotInstances().toString());
+
+		visualize(plotInstances, dataset);
+
 		mgr.close();
 	}
 
-	public static void show(List<Patent> list, double[][] data) throws Exception {
-		// number of instance
-		int size = list.size();
-		List<Instance> instances = new ArrayList<Instance>();
-		for (int i = 0; i < size; i++)
-			instances.add(new DenseInstance(3));
-
-		Attribute id = new Attribute("id", (ArrayList<String>) null, 0);
-		Attribute x = new Attribute("x-value", 1);
-		Attribute y = new Attribute("y-value", 2);
-		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
-		attributes.add(id);
-		attributes.add(x);
-		attributes.add(y);
-
-		for (int i = 0; i < size; i++) {
-			Instance obj = instances.get(i);
-			obj.setValue(id, list.get(i).getString("patent_id"));
-			obj.setValue(x, data[0][i]);
-			obj.setValue(y, data[1][i]);
-		}
-
-		Instances newDataset = new Instances("Dataset", attributes, size);
-		for (Instance inst : instances)
-			newDataset.add(inst);
-
-		System.out.println(newDataset.toString());
-		
-		SimpleKMeans km = new SimpleKMeans();
-		km.setMaxIterations(1000);
-		km.setPreserveInstancesOrder(true);
-		km.setNumClusters(5);
-		
-		FilteredClusterer fc = new FilteredClusterer();
-		
-		Remove rm = new Remove();
-		rm.setAttributeIndices("1");
-		fc.setFilter(rm);
-		fc.setClusterer(km);
-		
-		fc.buildClusterer(newDataset);
-		ClusterEvaluation eval = new ClusterEvaluation();
-		eval.setClusterer(fc);
-		eval.evaluateClusterer(newDataset);
-	
-		System.out.println(eval.clusterResultsToString());
-		
-
-		ClustererAssignmentsPlotInstances plotInstances = new ClustererAssignmentsPlotInstances();
-		plotInstances.setClusterer(fc);
-		plotInstances.setInstances(newDataset);
-		plotInstances.setClusterEvaluation(eval);
-		plotInstances.setUp();
-		PlotData2D dataset = plotInstances.getPlotData("plot name");
-		int[] shape = dataset.getShapeSize();
-		for (int i = 0; i < shape.length; i++) {
-			shape[i]++;
-		}
-		dataset.setShapeSize(shape);
-
+	private static void visualize(
+			ClustererAssignmentsPlotInstances plotInstances, PlotData2D dataset)
+			throws Exception {
 		// generate visualization
 		VisualizePanel visPanel = new VisualizePanel();
 		visPanel.addPlot(dataset);
-		
+
 		// clean up
 		plotInstances.cleanUp();
 
-		final javax.swing.JFrame jf = new javax.swing.JFrame("Weka Clusterer Visualize: " + "test");
+		final javax.swing.JFrame jf = new javax.swing.JFrame(
+				"Weka Clusterer Visualize: " + "test");
 		jf.setSize(500, 400);
 		jf.getContentPane().setLayout(new BorderLayout());
 		jf.getContentPane().add(visPanel, BorderLayout.CENTER);

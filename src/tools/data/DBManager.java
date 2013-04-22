@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.javalite.activejdbc.Base;
@@ -93,4 +94,9 @@ public class DBManager {
 	public long count(String table){
 		return Base.count(table);
 	}
+	
+	public List<Map> findAll(String query){
+		return Base.findAll(query);
+	}
+	
 }
