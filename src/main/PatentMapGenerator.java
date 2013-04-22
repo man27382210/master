@@ -22,7 +22,6 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import tools.sim.PatentSimilarity;
-import tools.sim.WordNetSimilarity;
 
 public class PatentMapGenerator {
 
@@ -51,7 +50,7 @@ public class PatentMapGenerator {
 			x++;
 			y = 0;
 		}
-
+		
 		double[][] output = MDSJ.classicalScaling(input); // apply MDS
 		for (int i = 0; i < list.size(); i++) { // output all coordinates
 			System.out.println(output[0][i] + " " + output[1][i]);

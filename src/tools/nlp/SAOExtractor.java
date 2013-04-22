@@ -1,6 +1,5 @@
 package tools.nlp;
 
-import item.MakeInstrumentationUtil;
 import item.SaoTuple;
 
 import java.io.FileNotFoundException;
@@ -13,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import tools.data.DBManager;
+import util.MakeInstrumentationUtil;
 
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.process.DocumentPreprocessor;

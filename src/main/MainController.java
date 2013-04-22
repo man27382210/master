@@ -1,6 +1,5 @@
 package main;
 
-import item.MakeInstrumentationUtil;
 import item.Patent;
 import item.SaoTuple;
 
@@ -18,6 +17,7 @@ import tools.nlp.SAOExtractor;
 import tools.nlp.SAOFilter;
 import tools.nlp.StanfordLemmatizer;
 import tools.sim.WordNetSimilarity;
+import util.MakeInstrumentationUtil;
 
 public class MainController {
 
@@ -52,11 +52,6 @@ public class MainController {
 		
 		PatentMapGenerator g = new PatentMapGenerator();
 		g.getPatentMap(patents);
-
-		WordNetSimilarity w = WordNetSimilarity.getInstance();
-		System.out.println("zero = " + w.zero);
-		System.out.println("non-zero = " + w.nzero);
-
 	}
 
 	public static void main(String[] args) {

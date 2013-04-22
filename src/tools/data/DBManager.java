@@ -1,6 +1,5 @@
 package tools.data;
 
-import item.MakeInstrumentationUtil;
 import item.Patent;
 import item.SaoTuple;
 
@@ -16,6 +15,7 @@ import java.util.Properties;
 import org.javalite.activejdbc.Base;
 
 import tools.nlp.SAOExtractor;
+import util.MakeInstrumentationUtil;
 
 public class DBManager {
 	private static DBManager instance;
@@ -41,6 +41,18 @@ public class DBManager {
 		return instance;
 	}
 
+	public String getUrl() {
+		return url;
+	}
+	
+	public String getUser() {
+		return user;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
 	private static void loadProperties() throws FileNotFoundException,
 	    IOException {
 		props = new Properties();
