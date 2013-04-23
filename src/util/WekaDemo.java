@@ -56,7 +56,7 @@ public class WekaDemo {
 		SimpleKMeans km = new SimpleKMeans();
 		km.setMaxIterations(1000);
 		km.setPreserveInstancesOrder(true);
-		km.setNumClusters(11);
+		km.setNumClusters(3);
 
 		FilteredClusterer fc = new FilteredClusterer();
 
