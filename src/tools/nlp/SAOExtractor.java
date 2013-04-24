@@ -1,6 +1,6 @@
 package tools.nlp;
 
-import item.SaoTuple;
+import item.SAO;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -57,9 +57,9 @@ public class SAOExtractor {
 	}
 
 	// get all sao list in a paragraph
-	public List<SaoTuple> getSAOTupleList(String paragraph) throws IOException {
+	public List<SAO> getSAOTupleList(String paragraph) throws IOException {
 		List<String> sentList = splitParagraph(paragraph);
-		List<SaoTuple> tupleList = new ArrayList<SaoTuple>();
+		List<SAO> tupleList = new ArrayList<SAO>();
 
 		// logger.debug("Found sentences : " + sentList.size());
 		int count = 1;
@@ -114,8 +114,8 @@ public class SAOExtractor {
 		// "((\d+\w?\s?,\s?)*(\d+\w?\s?(and|or)\s?\d+\w?))|(\d\w?+\s?(and|or)\s?\d\w?+)|(\d+\w?)";
 	}
 
-	public List<SaoTuple> getSAOTupleListBySentence(String sent) throws IOException {
-		List<SaoTuple> list = new ArrayList<SaoTuple>();
+	public List<SAO> getSAOTupleListBySentence(String sent) throws IOException {
+		List<SAO> list = new ArrayList<SAO>();
 		String origin_sent = new String(sent);
 		sent = regexSentence(sent);
 		Tree parse = parser.parse(sent);
@@ -185,7 +185,7 @@ public class SAOExtractor {
 					
 					System.out.println(subject + " <=> " + predicate + " <=> " + object);
 
-					SaoTuple t = new SaoTuple();
+					SAO t = new SAO();
 					t.set("subject", subject);
 					t.set("object", object);
 					t.set("predicate", predicate);

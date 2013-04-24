@@ -1,4 +1,4 @@
-package main;
+package tools.nlp;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,7 +33,7 @@ import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
 
 import item.Patent;
-import item.SaoTuple;
+import item.SAO;
 
 public class TFIDFRanker {
 	private static TFIDFRanker instance = null;
@@ -196,7 +196,7 @@ public class TFIDFRanker {
 		return getTF(id, term) * getIDF(term);
 	}
 	
-	public double getTFIDF(String id, SaoTuple t) {
+	public double getTFIDF(String id, SAO t) {
 		double value = getTFIDF(id, t.getString("subject"))
 				+ getTFIDF(id, t.getString("predicate"))
 				+ getTFIDF(id, t.getString("object"));

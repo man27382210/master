@@ -1,8 +1,10 @@
 package item;
 
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.annotations.Table;
 
-public class SaoTuple extends Model {
+@Table("sao_tuples")
+public class SAO extends Model {
 
 	@Override
 	public String toString() {

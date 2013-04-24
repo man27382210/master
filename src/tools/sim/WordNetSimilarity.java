@@ -1,7 +1,7 @@
 package tools.sim;
 
 import item.Patent;
-import item.SaoTuple;
+import item.SAO;
 import java.util.List;
 
 import edu.cmu.lti.ws4j.WS4J;

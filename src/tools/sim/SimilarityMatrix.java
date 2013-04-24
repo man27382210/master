@@ -29,7 +29,7 @@ public class SimilarityMatrix {
 					y++;
 					continue;
 				} else {
-					matrix[x][y] = sim.getPatentDissim(p1, p2);
+					matrix[x][y] = sim.getPatentSim(p1, p2);
 					System.out.println("Fetching sim between " + p1.getId() + " and " + p2.getId() + " : " + matrix[x][y]);
 					y++;
 				}

@@ -1,4 +1,4 @@
-package main;
+package tools.sim;
 
 import item.Patent;
 
@@ -21,7 +21,6 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import tools.sim.PatentSimilarity;
 
 public class PatentMapGenerator {
 
@@ -42,15 +41,15 @@ public class PatentMapGenerator {
 					y++;
 					continue;
 				} else {
-					input[x][y] = sim.getPatentDissim(p1, p2);
-					System.out.println("Fetching sim between " + p1.getId() + " and " + p2.getId() + " : " + input[x][y]);
+					input[x][y] = 1 - sim.getPatentSim(p1, p2);
+					System.out.println("Fetching dissim between " + p1.getId() + " and " + p2.getId() + " : " + input[x][y]);
 					y++;
 				}
 			}
 			x++;
 			y = 0;
 		}
-		
+
 		double[][] output = MDSJ.classicalScaling(input); // apply MDS
 		for (int i = 0; i < list.size(); i++) { // output all coordinates
 			System.out.println(output[0][i] + " " + output[1][i]);

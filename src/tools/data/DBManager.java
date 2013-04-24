@@ -1,8 +1,7 @@
 package tools.data;
 
 import item.Patent;
-import item.PatentFullText;
-import item.SaoTuple;
+import item.SAO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

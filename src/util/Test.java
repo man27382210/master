@@ -1,6 +1,6 @@
 package util;
 
-import item.SaoTuple;
+import item.SAO;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,8 +20,8 @@ public class Test {
 			m.setConfig(driver, url, user, password);
 			m.open();
 			
-			List<SaoTuple> list = SaoTuple.findAll();
-			for (SaoTuple t : list) {
+			List<SAO> list = SAO.findAll();
+			for (SAO t : list) {
 				System.out.println(t.toString());
 			}
 			

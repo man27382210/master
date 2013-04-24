@@ -1,4 +1,4 @@
-package main;
+
 
 import edu.cmu.lti.jawjaw.util.Configuration;
 import edu.cmu.lti.lexical_db.ILexicalDatabase;

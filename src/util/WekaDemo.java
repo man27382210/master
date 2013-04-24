@@ -1,7 +1,7 @@
 package util;
 
 import item.Patent;
-import item.SaoTuple;
+import item.SAO;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import main.PatentMapGenerator;
-import main.TFIDFRanker;
 
 import tools.data.DBManager;
 import tools.nlp.SAOFilter;
+import tools.nlp.TFIDFRanker;
+import tools.sim.PatentMapGenerator;
 import tools.sim.SimilarityMatrix;
 import weka.classifiers.functions.LinearRegression;
 import weka.clusterers.ClusterEvaluation;
@@ -56,7 +56,7 @@ public class WekaDemo {
 		SimpleKMeans km = new SimpleKMeans();
 		km.setMaxIterations(1000);
 		km.setPreserveInstancesOrder(true);
-		km.setNumClusters(3);
+		km.setNumClusters(11);
 
 		FilteredClusterer fc = new FilteredClusterer();
 
