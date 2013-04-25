@@ -16,12 +16,15 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.FieldInfo.IndexOptions;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -40,12 +43,14 @@ public class LuceneUtil {
 	private static void addDoc(IndexWriter w, String id, String text)
 			throws IOException {
 		FieldType fieldType = new FieldType();
+		fieldType.setStored(true);
 		fieldType.setStoreTermVectors(true);
 		fieldType.setStoreTermVectorPositions(true);
+		
 		fieldType.setIndexed(true);
-		fieldType.setIndexOptions(IndexOptions.DOCS_AND_FREQS);
-		fieldType.setStored(true);
-
+		//fieldType.setIndexOptions(IndexOptions.DOCS_AND_FREQS);
+		fieldType.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+		
 		Document doc = new Document();
 		doc.add(new StringField("id", id, Field.Store.YES));
 		doc.add(new Field("text", text, fieldType));
@@ -72,7 +77,7 @@ public class LuceneUtil {
 		for (int i = 0; i < 1363; i++) {
 			long d1 = System.currentTimeMillis();
 			List<PatentFullText> list = PatentFullText
-					.findBySQL("Select * From uspto2 Where auto_id >= (Select auto_id From uspto2 Order By auto_id limit "
+					.findBySQL("Select * From uspto Where auto_id >= (Select auto_id From uspto Order By auto_id limit "
 							+ 3000 * i + ",1) limit 3000");
 
 			for (PatentFullText d : list) {
@@ -98,7 +103,7 @@ public class LuceneUtil {
 		Directory index = FSDirectory.open(new File("G:/lucene/index"));
 
 		// 2. query
-		String querystr = "plunger";
+		String querystr = "process";
 
 		// the "title" arg specifies the default field to use
 		// when no field is explicitly specified in the query.
@@ -110,13 +115,29 @@ public class LuceneUtil {
 		IndexReader reader = DirectoryReader.open(index);
 		
 		IndexSearcher searcher = new IndexSearcher(reader);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(
-				hitsPerPage, true);
-		searcher.search(q, collector);
-		ScoreDoc[] hits = collector.topDocs().scoreDocs;
+		
+		TopDocs topDocs = searcher.search(q, 10);
+		int totalHits = topDocs.totalHits;
+		System.out.println("Found " + totalHits + " hits.");
+		
+		String sentence = "present invention";
+        PhraseQuery query = new PhraseQuery();
+        String[] words = sentence.split(" ");
+        for (String word : words) {
+            query.add(new Term("text", word));
+        }
+        
+        topDocs = searcher.search(query, 10);
+		totalHits = topDocs.totalHits;
+		System.out.println("Found " + totalHits + " hits.");
+		
+//		TopScoreDocCollector collector = TopScoreDocCollector.create(
+//				hitsPerPage, true);
+//		searcher.search(q, collector);
+//		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
 		// 4. display results
-		System.out.println("Found " + hits.length + " hits.");
+		//System.out.println("Found " + hits.length + " hits.");
 		// for (int i = 0; i < hits.length; ++i) {
 		// int docId = hits[i].doc;
 		// Document d = searcher.doc(docId);
@@ -126,11 +147,11 @@ public class LuceneUtil {
 
 	public static void main(String[] args) {
 		try {
-			// LuceneUtil.createIndex();
-			long d0 = System.currentTimeMillis();
-			LuceneUtil.query();
-			long d1 = System.currentTimeMillis();
-			System.out.println("query:" + (d1 - d0) + "ms");
+			LuceneUtil.createIndex();
+//			long d0 = System.currentTimeMillis();
+//			LuceneUtil.query();
+//			long d1 = System.currentTimeMillis();
+//			System.out.println("query:" + (d1 - d0) + "ms");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
