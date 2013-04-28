@@ -12,7 +12,7 @@ import org.javalite.activejdbc.annotations.Table;
 
 import tools.data.GoogleCrawler;
 
-@Table("uspto")
+//@Table("uspto")
 @IdName("patent_id")
 public class Patent extends Model {
 	Map<String, Object> map = new HashMap<String, Object>();

@@ -95,8 +95,4 @@ public class DBManager {
 		return Base.count(table);
 	}
 	
-	public List<Map> findAll(String query){
-		return Base.findAll(query);
-	}
-	
 }
