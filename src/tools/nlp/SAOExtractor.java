@@ -25,10 +25,7 @@ import edu.stanford.nlp.trees.TypedDependency;
 
 public class SAOExtractor {
 	private static SAOExtractor instance = null;
-	// private Logger logger;
-	// private List<String> subjectTd;
-	// private List<String> objectTd;
-	private StanfordParser parser;
+	private StanfordUtil stanford;
 	private GrammaticalStructureFactory gsf;
 	private final int MAX_LENGTH_OF_SENTENCE = 30;
 	private String WORD_TYPE = "simple";
@@ -43,13 +40,8 @@ public class SAOExtractor {
 
 	// constructor
 	public SAOExtractor() {
-		parser = StanfordParser.getInstance();
+		stanford = StanfordUtil.getInstance();
 		gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
-		// subjectTd = Arrays.asList(new String[] { "nsubj", "nsubjpass", "xsubj"
-		// });
-		// objectTd = Arrays.asList(new String[] { "dobj", "iobj", "pobj", "prep_"
-		// });
-		// logger = Logger.getLogger(this.getClass().getSimpleName());
 	}
 
 	private String getName(TypedDependency td) {
@@ -118,7 +110,7 @@ public class SAOExtractor {
 		List<SAO> list = new ArrayList<SAO>();
 		String origin_sent = new String(sent);
 		sent = regexSentence(sent);
-		Tree parse = parser.parse(sent);
+		Tree parse = stanford.parse(sent);
 		List<TypedDependency> subjectTdList = new ArrayList<TypedDependency>();
 		List<TypedDependency> objectTdList = new ArrayList<TypedDependency>();
 		List<TypedDependency> modifierTdList = new ArrayList<TypedDependency>();
@@ -178,10 +170,9 @@ public class SAOExtractor {
 						continue;
 					
 					// use stanford lemmatizer
-					StanfordLemmatizer lemmatizer = StanfordLemmatizer.getInstance();
-					subject = lemmatizer.getLemma(subject);
-					predicate = lemmatizer.getLemma(predicate);
-					object = lemmatizer.getLemma(object);
+					subject = stanford.getLemma(subject);
+					predicate = stanford.getLemma(predicate);
+					object = stanford.getLemma(object);
 					
 					System.out.println(subject + " <=> " + predicate + " <=> " + object);
 
@@ -227,46 +218,4 @@ public class SAOExtractor {
 			return false;
 		}
 	}
-
-	// get sao list in a sentence
-	// private List<SaoTuple> old_getSAOTupleListBySentence(String sent) throws
-	// IOException {
-	// List<SaoTuple> saoTupleList = new ArrayList<SaoTuple>();
-	// // create the parse structure
-	// Tree parse = parser.parse(sent);
-	// List<TypedDependency> tdl =
-	// gsf.newGrammaticalStructure(parse).typedDependenciesCCprocessed();
-	//
-	// StopWordRemover remover = StopWordRemover.getInstance();
-	// for (TypedDependency td : tdl) {
-	// // get dependency match subject relationship
-	// if (subjectTd.contains(getName(td))) {
-	// TreeGraphNode subject = td.dep();
-	// TreeGraphNode predicate = td.gov();
-	// // match stopword
-	// if (remover.matchFilter(subject.nodeString()) ||
-	// remover.matchFilter(predicate.nodeString()))
-	// continue;
-	// for (TypedDependency td2 : tdl) {
-	// if (objectTd.contains(getName(td2))) {
-	// TreeGraphNode object = td2.dep();
-	// TreeGraphNode predicate2 = td2.gov();
-	// if (remover.matchFilter(object.nodeString()))
-	// continue;
-	// if (predicate.equals(predicate2)) {
-	// SaoTuple tuple = new SaoTuple();
-	// tuple.set("sentence", sent);
-	// tuple.set("subject", new String(subject.nodeString()));
-	// tuple.set("predicate", new String(predicate.nodeString()));
-	// tuple.set("object", new String(object.nodeString()));
-	// logger.debug(tuple.toString());
-	// saoTupleList.add(tuple);
-	// }
-	// }
-	// }
-	// }
-	// }
-	//
-	// return saoTupleList;
-	// }
 }

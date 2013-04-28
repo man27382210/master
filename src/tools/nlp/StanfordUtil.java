@@ -1,29 +1,39 @@
 package tools.nlp;
 
+import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
-import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.objectbank.TokenizerFactory;
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.process.CoreLabelTokenFactory;
+import edu.stanford.nlp.process.PTBTokenizer;
+import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
-public class StanfordLemmatizer {
-	public static StanfordLemmatizer instance = null;
+public class StanfordUtil {
+	private static StanfordUtil instance = null;
+	private LexicalizedParser lp;
 	protected StanfordCoreNLP pipeline;
 
-	public static StanfordLemmatizer getInstance() {
+	// singleton pattern
+	public static StanfordUtil getInstance() {
 		if (instance == null) {
-			instance = new StanfordLemmatizer();
+			instance = new StanfordUtil();
+			instance.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+			instance.loadLemmatizer();
 		}
 		return instance;
 	}
 
-	private StanfordLemmatizer() {
+	public void loadLemmatizer() {
 		// Create StanfordCoreNLP object properties, with POS tagging
 		// (required for lemmatization), and lemmatization
 		Properties props;
@@ -35,6 +45,20 @@ public class StanfordLemmatizer {
 		this.pipeline = new StanfordCoreNLP(props);
 	}
 
+	// load lp model
+	private void loadModel(String model) {
+		this.lp = LexicalizedParser.loadModel(model);
+	}
+
+	// parse sentence
+	public Tree parse(String sentence) {
+		TokenizerFactory<CoreLabel> tokenizerFactory = PTBTokenizer.factory(new CoreLabelTokenFactory(), "");
+		List<CoreLabel> rawWords = tokenizerFactory.getTokenizer(new StringReader(sentence)).tokenize();
+		Tree parse = lp.apply(rawWords);
+		return parse;
+	}
+
+	// get the first lemma
 	public String getLemma(String word) {
 		List<String> list = lemmatize(word);
 		if (list.isEmpty()) {
@@ -44,7 +68,7 @@ public class StanfordLemmatizer {
 		}
 	}
 
-	public List<String> lemmatize(String documentText) {
+	private List<String> lemmatize(String documentText) {
 		List<String> lemmas = new LinkedList<String>();
 
 		// create an empty Annotation just with the given text
@@ -66,6 +90,4 @@ public class StanfordLemmatizer {
 
 		return lemmas;
 	}
-
-	
 }
