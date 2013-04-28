@@ -44,7 +44,7 @@ public class MainController {
 		// System.out.println(p.getString("patent_id"));
 
 		// 3. generate sao triple (single word) for patent (if it have)
-		SAOPreprocessor.saveTree(patentList);
+		SAOPreprocessor.parseTree(patentList);
 		DataSetLoader.loadSAO(patentList, "single");
 
 		// 4. TFIDF ranking for sao and filter sao triple topK
