@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import util.PRCurve;
+import tools.evaluation.AUC;
+import tools.evaluation.PRCurve;
 
 public class MoehrleNovelty {
 
@@ -24,12 +25,12 @@ public class MoehrleNovelty {
 			 double d = getNovelty(p);
 			 System.out.println(p.getId() + ":" + d);
 		}
+		
 		Collections.sort(patentList, new NoveltyComparator());
 		for(Patent p : patentList) {
 			expect.add((String) p.getId());
 		}
-		System.out.println(expect);
-		PRCurve.draw(patentList);
+		
 		return expect;
 	}
 

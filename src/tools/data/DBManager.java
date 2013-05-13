@@ -13,9 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import main.SAOExtractor;
+
 import org.javalite.activejdbc.Base;
 
-import tools.nlp.SAOExtractor;
 import util.MakeInstrumentationUtil;
 
 public class DBManager {

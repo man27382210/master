@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;
@@ -24,9 +25,14 @@ import item.Patent;
 
 public class PatentMatrixGenerator {
 
-	public static void generate(List<Patent> list) throws IOException, InterruptedException {
+  private static Similarity sim;
+  
+  public static void setSimilarity(Similarity sim) {
+    PatentMatrixGenerator.sim = sim;
+  }
+  
+	public static void generate(List<Patent> list) throws IOException, InterruptedException, ParseException {
 		int size = list.size();
-		PatentSimilarity sim = PatentSimilarity.getInstance();
 		double[][] input = new double[size][size];
 
 		for (int i = 0; i < size; i++) {
@@ -39,8 +45,10 @@ public class PatentMatrixGenerator {
 				} else if (i > j) {
 					input[i][j] = input[j][i];
 				} else {
-					input[i][j] = 1 - sim.getPatentSim(p1, p2);
-					System.out.println("Fetching dissim between " + p1.getId() + " and " + p2.getId() + " : " + input[i][j]);
+				  long d0 = System.currentTimeMillis();
+					input[i][j] = 1 - sim.patentSim(p1, p2);
+					long d1 = System.currentTimeMillis();
+					System.out.println("Fetching dissim between " + p1.getId() + " and " + p2.getId() + " : " + input[i][j] + " time : " + (d1-d0) + "ms");
 				}
 				map.put(p2, input[i][j]);
 			}

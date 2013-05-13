@@ -58,13 +58,13 @@ public class TFIDFRanker {
     fieldType.setStoreTermVectors(true);
     fieldType.setStoreTermVectorPositions(true);
     fieldType.setIndexed(true);
-    fieldType.setIndexOptions(IndexOptions.DOCS_AND_FREQS);
+    fieldType.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
     fieldType.setStored(true);
     
 		Document doc = new Document();
 		doc.add(new StringField("id", id, Field.Store.YES));
 		doc.add(new Field("content", content, fieldType));
-		w.addDocument(doc);
+		w.addDocument(doc); 
 	}
 
 	private void setIdMap(IndexReader reader) throws IOException {
@@ -77,37 +77,7 @@ public class TFIDFRanker {
 		// System.out.println(idMap.size());
 	}
 
-	public static void main(String[] args){
-		TFIDFRanker r = TFIDFRanker.getInstance();
-		try {
-	    r.test();
-    } catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-    }
-	}
-	
-	private void test() throws IOException{
-		StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_42);
-		Directory index = new RAMDirectory();
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42,
-		    analyzer);
-		IndexWriter w = new IndexWriter(index, config);
 
-		addDoc(w, "p01", "I love young man.");
-		addDoc(w, "p02", "you love young girl.");
-		addDoc(w, "p03", "I dont love young man, and I love you.");
-
-		w.close();
-		IndexReader reader = DirectoryReader.open(index);
-		setIdMap(reader);
-		setTermFreqMap(reader);
-		setDocLengthMap();
-		
-		System.out.println(idMap.toString());
-		System.out.println(termFreqMap.toString());
-		System.out.println(docLengthMap.toString());
-	}
 	
 	
 	public void load(List<Patent> list) throws IOException {
@@ -192,15 +162,56 @@ public class TFIDFRanker {
 		return Math.log((double)total / (double)docFreq);
 	}
 
-	public double getTFIDF(String id, String term) {
-		return getTF(id, term) * getIDF(term);
+	public double getTFIDF(String id, String phrase) {
+	  // simple tf-idf for phrase
+	  String[] terms = phrase.split(" ");
+	  if (terms.length == 1) return getTF(id, terms[0]) * getIDF(terms[0]); 
+	  double value = 0;
+	  for (String term : terms) {
+	    value += getTF(id, term) * getIDF(term);
+	  }
+	  return value/terms.length;  
 	}
 	
 	public double getTFIDF(String id, SAO t) {
-		double value = getTFIDF(id, t.getString("subject"))
+	  
+	  
+	  double value = getTFIDF(id, t.getString("subject"))
 				+ getTFIDF(id, t.getString("predicate"))
 				+ getTFIDF(id, t.getString("object"));
 		//System.out.println(t.getString("subject") + " TFIDF:" + getTFIDF(id, t.getString("subject")));
 		return value;
 	}
+	
+	 public static void main(String[] args){
+	    TFIDFRanker r = TFIDFRanker.getInstance();
+	    try {
+	      r.test();
+	    } catch (IOException e) {
+	      // TODO Auto-generated catch block
+	      e.printStackTrace();
+	    }
+	  }
+	  
+	  private void test() throws IOException{
+	    StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_42);
+	    Directory index = new RAMDirectory();
+	    IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42,
+	        analyzer);
+	    IndexWriter w = new IndexWriter(index, config);
+
+	    addDoc(w, "p01", "I love young man.");
+	    addDoc(w, "p02", "you love young girl.");
+	    addDoc(w, "p03", "I dont love young man, and I love you.");
+
+	    w.close();
+	    IndexReader reader = DirectoryReader.open(index);
+	    setIdMap(reader);
+	    setTermFreqMap(reader);
+	    setDocLengthMap();
+	    
+	    System.out.println(idMap.toString());
+	    System.out.println(termFreqMap.toString());
+	    System.out.println(docLengthMap.toString());
+	  }
 }

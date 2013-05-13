@@ -19,9 +19,6 @@ public class PatentFetcher {
 	// Given a result of query from uspto
 	Document query_result;
 
-	// Collected patents
-	// List<Document> patents = new ArrayList<Document>();
-
 	// Count of relative patents from query
 	int count_of_relative_patents;
 

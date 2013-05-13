@@ -7,18 +7,21 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import depreciate.SimilarityMatrix;
+
+import main.TFIDFFilter;
+
 
 import tools.data.DBManager;
-import tools.nlp.SAOFilter;
+import tools.evaluation.PRCurve;
 import tools.nlp.TFIDFRanker;
-import tools.sim.PatentMapGenerator;
-import tools.sim.SimilarityMatrix;
 import weka.classifiers.functions.LinearRegression;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.FilteredClusterer;
@@ -144,5 +147,23 @@ public class WekaDemo {
 			}
 		});
 		jf.setVisible(true);
+	}
+	
+	public class ValueComparator implements Comparator<Patent> {
+	  Map<Patent, Double> base;
+
+	  public ValueComparator(Map<Patent, Double> base) {
+	    this.base = base;
+	  }
+
+	  // Note: this comparator imposes orderings that are inconsistent with
+	  // equals.
+	  public int compare(Patent a, Patent b) {
+	    if (base.get(a) >= base.get(b)) {
+	      return -1;
+	    } else {
+	      return 1;
+	    } // returning 0 would merge keys
+	  }
 	}
 }

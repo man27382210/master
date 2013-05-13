@@ -16,17 +16,9 @@ public class StopWordRemover {
 		if (instance == null ){
 			instance = new StopWordRemover();
 			instance.loadStopWord();
-			instance.loadGeneralWord();
 		}
 		return instance;
 	}
-	
-	private void loadGeneralWord() {
-		generalWordList.add("DESCRIPTION");
-		generalWordList.add("FIGURE");
-		generalWordList.add("FIG");
-		generalWordList.add("BACKGROUND");
-  }
 
 	private boolean isStopWord(String word) {
 		return stopWordList.contains(word);
@@ -56,10 +48,10 @@ public class StopWordRemover {
 		}
 		br.close();
 	}
-
+	
 	public static void main(String[] args) throws IOException {
-		StopWordRemover filter = new StopWordRemover();
-		
+	  StopWordRemover s = StopWordRemover.getInstance();
+	  boolean b = s.isAlphabetStr("a.");
+	  System.out.println(b);
 	}
-
 }
