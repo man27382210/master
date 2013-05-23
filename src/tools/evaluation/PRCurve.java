@@ -32,7 +32,9 @@ public class PRCurve {
     int answer = actualList.size();
     double max_accuracy = 0;
     double max_f1 = 0;
-
+    double total_accuracy = 0;
+    double total_f1 = 0;
+    
     double recall_bound = 0.0;
     List<String> list = new ArrayList<String>();
     System.out.println("recall , precision");
@@ -57,16 +59,17 @@ public class PRCurve {
       double f1 = 2 * precision * recall / (precision + recall);
       if (f1 > max_f1)
         max_f1 = f1;
-
-      show(precision, recall);
       
-//      if (recall >= recall_bound) {
-//        show(precision, recall_bound);
-//        recall_bound += 0.05;
-//      }
+      if (recall >= recall_bound) {
+        show(precision, recall_bound);
+        recall_bound += 0.1;
+        total_accuracy += accuracy;
+        total_f1 += f1;
+      }
     }
 
-    System.out.println("Accuracy : " + max_accuracy + " F1 : " + max_f1);
+    System.out.println("avg-accuracy : " + total_accuracy/11 + " avg-f1 : " + total_f1/11);
+    System.out.println("max-accuracy : " + max_accuracy + " max-f1 : " + max_f1);
   }
 
   public static void show(double precision, double recall) {

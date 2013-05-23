@@ -18,7 +18,6 @@ import java.util.List;
 import tools.data.DBManager;
 import tools.data.DataSetLoader;
 import tools.nlp.StanfordUtil;
-import tools.nlp.StopWordRemover;
 import util.MakeInstrumentationUtil;
 
 import edu.stanford.nlp.ling.HasWord;
@@ -34,7 +33,8 @@ import edu.stanford.nlp.trees.TypedDependency;
 public class SAOExtractor {
   private static SAOExtractor instance = null;
   private static boolean PHRASE_MODE = true;
-
+  private static StanfordUtil stanford = StanfordUtil.getInstance();
+  
   // singleton pattern
   public static SAOExtractor getInstance() {
     if (instance == null) {
@@ -46,7 +46,7 @@ public class SAOExtractor {
   private static String getName(TypedDependency td) {
     return td.reln().getShortName();
   }
-
+  
   public static void extract(List<Patent> list) throws ClassNotFoundException, IOException {
     int total = 0;
     int max = 0;
@@ -66,8 +66,8 @@ public class SAOExtractor {
       System.out.println(p.getString("patent_id") + " complete extract sao in " + (d1 - d0) + " ms , count:" + saoList.size());
     }
 
-    double avg = (double) total / (double) list.size(); 
-    
+    double avg = (double) total / (double) list.size();
+
     System.out.println("total : " + total + " avg : " + avg + " max : " + max + " min : " + min);
   }
 
@@ -120,38 +120,46 @@ public class SAOExtractor {
     for (TypedDependency std : subjectTdList) {
       for (TypedDependency otd : objectTdList) {
         if (std.gov().equals(otd.gov())) {
-          String subject = std.dep().nodeString();
-          String predicate = std.gov().nodeString();
-          String object = otd.dep().nodeString();
-          // System.out.println(subject + "-" + predicate + "-" +
-          // object);
+          String subject = clean(std.dep().nodeString());
+          String predicate = clean(std.gov().nodeString());
+          String object = clean(otd.dep().nodeString());
 
           // search from end to start
           if (!modifierTdList.isEmpty()) {
             for (int i = modifierTdList.size() - 1; i >= 0; i--) {
               TypedDependency mtd = modifierTdList.get(i);
+
               if (getName(mtd).equals("nn")) {
+                String word = clean(mtd.dep().nodeString());
+                
                 if (std.dep().equals(mtd.gov())) {
-                  subject = mtd.dep().nodeString() + " " + subject;
+                  subject = word + " " + subject;
 
                 } else if (otd.dep().equals(mtd.gov())) {
-                  object = mtd.dep().nodeString() + " " + object;
+                  object = word + " " + object;
 
                 }
-              } else if (getName(mtd).equals("amod")) {
-                if (std.dep().equals(mtd.gov())) {
-                  subject = mtd.dep().nodeString() + " " + subject;
-
-                } else if (otd.dep().equals(mtd.gov())) {
-                  object = mtd.dep().nodeString() + " " + object;
-
-                }
-              }
+              }              
+//              if (getName(mtd).equals("nn")) {
+//                if (std.dep().equals(mtd.gov())) {
+//                  subject = mtd.dep().nodeString() + " " + subject;
+//
+//                } else if (otd.dep().equals(mtd.gov())) {
+//                  object = mtd.dep().nodeString() + " " + object;
+//
+//                }
+//              } else if (getName(mtd).equals("amod")) {
+//                if (std.dep().equals(mtd.gov())) {
+//                  subject = mtd.dep().nodeString() + " " + subject;
+//
+//                } else if (otd.dep().equals(mtd.gov())) {
+//                  object = mtd.dep().nodeString() + " " + object;
+//
+//                }
+//              }
             }
           }
 
-          // System.out.println(subject + " <=> " + predicate + " <=> " +
-          // object);
           SAO sao = new SAO();
           sao.set("patent_id", id);
           sao.set("subject", subject);
@@ -166,7 +174,13 @@ public class SAOExtractor {
 
     return list;
   }
-
+  
+  private static String clean(String phrase) {
+    phrase = stanford.getLemma(phrase);
+    phrase = phrase.replaceAll("-", " ");
+    return phrase;
+  }
+  
   private static boolean isSubjectTd(TypedDependency td) {
     List<String> list = Arrays.asList(new String[] { "nsubj", "xsubj", "agent" });
     String name = getName(td);

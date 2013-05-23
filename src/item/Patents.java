@@ -12,14 +12,22 @@ import tools.data.DataSetLoader;
 public class Patents extends ArrayList<Patent> {
   private static final long serialVersionUID = 1L;
   private String name;
+  private String totalIdFileName;
+  private String novelIdFileName;
   private List<String> totalIdList = new ArrayList<String>();
   private List<String> novelIdList = new ArrayList<String>();
 
   public Patents(String name, String totalIdFileName, String novelIdFileName) throws Exception {
     this.name = name;
+    this.totalIdFileName = totalIdFileName;
+    this.novelIdFileName = novelIdFileName;
     totalIdList = this.loadID(totalIdFileName);
     novelIdList = this.loadID(novelIdFileName);
     this.loadPatent(totalIdList);
+  }
+
+  public void getInfo() {
+    System.out.println("name:" + name + " total:" + totalIdFileName + " answer:" + novelIdFileName);
   }
 
   public List<String> loadRank() throws IOException {
@@ -28,7 +36,7 @@ public class Patents extends ArrayList<Patent> {
       list.add(p.getString("patent_id"));
     return list;
   }
-  
+
   private List<String> loadID(String fileName) throws IOException {
     List<String> list = new ArrayList<String>();
     BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -48,7 +56,7 @@ public class Patents extends ArrayList<Patent> {
       this.add(p);
     }
   }
-  
+
   public List<String> getTotalIdList() {
     return totalIdList;
   }

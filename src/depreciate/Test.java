@@ -14,7 +14,7 @@ import tools.data.USPTOFetcher;
 public class Test {
 
   public static void main(String[] args) throws IOException {
-    List<String> list = DataSetLoader.loadID("data/dataset-3a-answer.txt");
+    List<String> list = DataSetLoader.loadID("data/dataset-4a.txt");
     Collections.sort(list);
     System.out.println(list);
     System.out.println(list.size());

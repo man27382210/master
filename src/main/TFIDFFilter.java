@@ -13,8 +13,8 @@ import tools.nlp.TFIDFRanker;
 
 public class TFIDFFilter {
   private static TFIDFFilter instance = null;
-  private Patent patent = null;
-  private TFIDFRanker ranker = null;
+  private static Patent patent = null;
+  private static TFIDFRanker ranker = null;
 
   public static TFIDFFilter getInstance() {
     if (instance == null) {
@@ -23,15 +23,15 @@ public class TFIDFFilter {
     return instance;
   }
 
-  public void filter(List<Patent> list, int topK) throws IOException {
+  public static void filter(List<Patent> list, int topK) throws IOException {
     ranker = TFIDFRanker.getInstance();
     ranker.load(list);
     for (Patent p : list)
       filterSAOTupleList(p, topK);
   }
 
-  public void filterSAOTupleList(Patent patent, int topK) {
-    this.patent = patent;
+  public static void filterSAOTupleList(Patent patent, int topK) {
+    TFIDFFilter.patent = patent;
     List<SAO> list = patent.getSaoTupleList();
     SAOTupleComparator comparator = new SAOTupleComparator();
     Collections.sort(list, comparator);
@@ -40,10 +40,12 @@ public class TFIDFFilter {
     }
     if (list.size() > topK)
       list = list.subList(0, topK);
+    System.out.println(list);
     patent.setSaoTupleList(list);
+
   }
 
-  public class SAOTupleComparator implements Comparator<Object> {
+  public static class SAOTupleComparator implements Comparator<Object> {
     @Override
     public int compare(Object arg0, Object arg1) {
       SAO t1 = (SAO) arg0;

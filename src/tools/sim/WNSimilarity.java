@@ -3,12 +3,19 @@ package tools.sim;
 import item.Patent;
 import item.SAO;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.lucene.queryparser.classic.ParseException;
+
 import tools.nlp.StanfordUtil;
 
+import edu.cmu.lti.jawjaw.pobj.POS;
+import edu.cmu.lti.jawjaw.util.WordNetUtil;
+import edu.cmu.lti.lexical_db.ILexicalDatabase;
+import edu.cmu.lti.lexical_db.NictWordNet;
 import edu.cmu.lti.ws4j.WS4J;
 import edu.cmu.lti.ws4j.util.WS4JConfiguration;
 import edu.sussex.nlp.jws.JWS;
@@ -20,13 +27,18 @@ public class WNSimilarity implements SAOBasedSimilarity {
   private static StanfordUtil stanford = StanfordUtil.getInstance();
   private static boolean LEMMATIZE = true;
   private static Map<Pair<String, String>, Double> cache = new HashMap<Pair<String, String>, Double>();
+  private static ILexicalDatabase db = new NictWordNet();
+  
+  public static int ZERO = 0;
+  public static int NON_ZERO = 0;
 
+  
   public WNSimilarity(boolean mfs, boolean cache, boolean lemma) {
     WS4JConfiguration.getInstance().setMFS(mfs);
     WS4JConfiguration.getInstance().setCache(cache);
     LEMMATIZE = lemma;
   }
-  
+
   public WNSimilarity() {
     WS4JConfiguration.getInstance().setMFS(true);
     WS4JConfiguration.getInstance().setCache(true);
@@ -69,38 +81,6 @@ public class WNSimilarity implements SAOBasedSimilarity {
     return (sum_of_i_to_j / l1.size() + sum_of_j_to_i / l2.size()) / 2;
 
   }
-  
-//  @Override
-//  public double patentSim(Patent p1, Patent p2) {
-//    List<SAO> l1 = p1.getSaoTupleList();
-//    List<SAO> l2 = p2.getSaoTupleList();
-//    double total1 = 0, total2 = 0;
-//
-//    for (SAO t1 : l1) {
-//      // find max pair for t1
-//      double max = 0;
-//      for (SAO t2 : l2) {
-//        double tmp = saoSim(t1, t2);
-//        if (tmp > max)
-//          max = tmp;
-//      }
-//      total1 = total1 + max;
-//    }
-//
-//    for (SAO t2 : l2) {
-//      // find max pair for t2
-//      double max = 0;
-//      for (SAO t1 : l1) {
-//        double tmp = saoSim(t1, t2);
-//        if (tmp > max)
-//          max = tmp;
-//      }
-//      total2 = total2 + max;
-//    }
-//
-//    double sim = ((total1 / l1.size()) + (total2 / l2.size())) / 2;
-//    return sim;
-//  }
 
   @Override
   public double saoSim(SAO t1, SAO t2) {
@@ -115,17 +95,40 @@ public class WNSimilarity implements SAOBasedSimilarity {
 
   @Override
   public double pharseSim(String pharse1, String pharse2) {
-    String[] words1 = pharse1.split(" ");
-    String[] words2 = pharse2.split(" ");
-    double sum = 0;
+    String[] l1 = pharse1.split(" ");
+    String[] l2 = pharse2.split(" ");
 
-    for (String word1 : words1) {
-      for (String word2 : words2) {
-        sum = sum + wordSim(word1, word2);
+    double[][] sim = new double[l1.length][l2.length];
+
+    for (int i = 0; i < l1.length; i++) {
+      for (int j = 0; j < l2.length; j++) {
+        sim[i][j] = wordSim(l1[i], l2[j]);
+        if (sim[i][j] == 0 ) ZERO++ ;
+        else NON_ZERO++;
       }
     }
 
-    return sum / (words1.length * words2.length);
+    double sum_of_i_to_j = 0;
+    for (int i = 0; i < l1.length; i++) {
+      double max = 0;
+      for (int j = 0; j < l2.length; j++) {
+        if (sim[i][j] > max)
+          max = sim[i][j];
+      }
+      sum_of_i_to_j += max;
+    }
+
+    double sum_of_j_to_i = 0;
+    for (int j = 0; j < l2.length; j++) {
+      double max = 0;
+      for (int i = 0; i < l1.length; i++) {
+        if (sim[i][j] > max)
+          max = sim[i][j];
+      }
+      sum_of_j_to_i += max;
+    }
+
+    return (sum_of_i_to_j / l1.length + sum_of_j_to_i / l2.length) / 2;
   }
 
   @Override
@@ -133,14 +136,15 @@ public class WNSimilarity implements SAOBasedSimilarity {
     Pair<String, String> pair = new Pair<String, String>(word1, word2);
     if (cache.containsKey(pair))
       return cache.get(pair);
-    
+
     if (LEMMATIZE) {
       word1 = stanford.getLemma(word1);
       word2 = stanford.getLemma(word2);
     }
-    
-    if (word1.equals(word2)) return 1;
-    
+
+    if (word1.equals(word2))
+      return 1;
+
     double value = WS4J.runWUP(word1, word2);
     if (value > 1) {
       value = 1;
@@ -185,6 +189,10 @@ public class WNSimilarity implements SAOBasedSimilarity {
       return (this.left.equals(pairo.getLeft()) && this.right.equals(pairo.getRight())) || (this.right.equals(pairo.getLeft()) && this.left.equals(pairo.getRight()));
     }
 
+  }
+
+  public static void main(String[] args) throws ParseException, IOException, InterruptedException {
+    System.out.println(WordNetUtil.wordToSynsets("asd", POS.n).size());
   }
 
 }

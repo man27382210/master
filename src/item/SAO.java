@@ -8,7 +8,7 @@ public class SAO extends Model {
 
   @Override
   public String toString() {
-    return "(S) " + getString("subject") + " (A) "  + getString("predicate") + " (O) " + getString("object");
+    return getString("predicate") + " (" + getString("subject") + ", " + getString("object") + ")";
   }
   
   
