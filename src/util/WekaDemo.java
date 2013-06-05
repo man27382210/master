@@ -62,9 +62,10 @@ public class WekaDemo {
 		km.setNumClusters(11);
 
 		FilteredClusterer fc = new FilteredClusterer();
-
 		Remove rm = new Remove();
-		rm.setAttributeIndices("1,4");
+		rm.setAttributeIndices("1,10");
+		
+		
 		fc.setFilter(rm);
 		fc.setClusterer(km);
 		fc.buildClusterer(data);

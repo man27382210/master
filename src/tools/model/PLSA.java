@@ -44,7 +44,7 @@ import tools.model.Lucene.WeightType;
 import tools.sim.PatentMatrixGenerator;
 import tools.sim.Similarity;
 
-class PLSA implements Similarity {
+public class PLSA implements Similarity {
   private int I = -1; // number of data
   private int J = -1; // number of words
   private int K = -1; // number of topics
@@ -270,15 +270,15 @@ class PLSA implements Similarity {
   public static void main(String[] args) throws Exception {
     DBManager mgr = DBManager.getInstance();
     mgr.open();
-    Patents dataset = new Patents("dataset1", "data/dataset-4a.txt", "data/dataset-4a-answer.txt");
+    Patents dataset = new Patents("dataset1", "data/dataset-5a.txt", "data/dataset-5a-answer.txt");
     PLSA plsa = new PLSA(new Lucene(dataset, WeightType.TF));
-    plsa.doPLSA(16, 60, 10);
+    plsa.doPLSA(32, 60, 10);
     System.out.println("end PLSA");
     PatentMatrixGenerator.setSimilarity(plsa);
     double d0 = System.currentTimeMillis();
     PatentMatrixGenerator.generate(dataset);
     double d1 = System.currentTimeMillis();
-
+  
     MoehrleNovelty.getRanking(dataset);
 
     PRCurve.evaluate(dataset);

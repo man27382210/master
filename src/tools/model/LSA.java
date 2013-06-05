@@ -30,6 +30,7 @@ import tools.model.Lucene.WeightType;
 import tools.measure.MoehrleNovelty;
 import tools.sim.PatentMatrixGenerator;
 import tools.sim.Similarity;
+import util.MakeInstrumentationUtil;
 
 public class LSA implements Similarity {
 
@@ -80,13 +81,13 @@ public class LSA implements Similarity {
 
   public static void main(String[] args) throws Exception {
 
-    // MakeInstrumentationUtil.make();
+    MakeInstrumentationUtil.make();
     DBManager mgr = DBManager.getInstance();
     mgr.open();
 
-    Patents dataset = new Patents("dataset1", "data/dataset-4a.txt", "data/dataset-4a-answer.txt");
+    Patents dataset = new Patents("dataset1", "data/dataset-7a.txt", "data/dataset-7a-answer.txt");
     LSA lsa = new LSA(new Lucene(dataset, WeightType.TFIDF));
-    lsa.doSVD(5);
+    lsa.doSVD(32);
 
     PatentMatrixGenerator.setSimilarity(lsa);
     PatentMatrixGenerator.generate(dataset);

@@ -17,11 +17,11 @@ import tools.data.GoogleCrawler;
 public class Patent extends Model {
 	Map<String, Object> map = new HashMap<String, Object>();
 	
-	private void putAttribute(String key, Object value) {
+	public void putAttribute(String key, Object value) {
 		map.put(key, value);
 	}
 	
-	private Object getAttribute(String key) {
+	public Object getAttribute(String key) {
 		return map.get(key);
 	}
 	

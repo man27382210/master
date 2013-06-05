@@ -44,7 +44,7 @@ public class VSM implements Similarity {
     DBManager mgr = DBManager.getInstance();
     mgr.open();
 
-    Patents dataset = new Patents("dataset1", "data/dataset-4a.txt", "data/dataset-4a-answer.txt");
+    Patents dataset = new Patents("dataset1", "data/dataset-7a.txt", "data/dataset-7a-answer.txt");
     Lucene nlp = new Lucene(dataset,  WeightType.TFIDF);
     VSM vsm = new VSM(nlp);
     PatentMatrixGenerator.setSimilarity(vsm);

@@ -52,9 +52,9 @@ public class SAOWN {
       MakeInstrumentationUtil.make();
       DBManager mgr = DBManager.getInstance();
       mgr.open();
-      Patents dataset = new Patents("dataset3", "data/dataset-1a.txt", "data/dataset-1a-answer.txt");
+      Patents dataset = new Patents("dataset5", "data/dataset-7a.txt", "data/dataset-7a-answer.txt");
       //Patents dataset = new Patents("dataset3", "data/dataset-test.txt", "data/dataset-test.txt");
-      SAOWN method = new SAOWN(dataset, 3);
+      SAOWN method = new SAOWN(dataset, 5);
       method.run();
       mgr.close();
     } catch (IOException e) {
