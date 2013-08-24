@@ -1,13 +1,14 @@
 package tools.evaluation;
 
-import item.Patent;
-import item.Patents;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import core.dbmodel.Patent;
+import core.dbmodel.Patents;
 
 public class AUC {
   

@@ -1,36 +1,25 @@
 package tools.model;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.DocsEnum;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.MultiFields;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.BytesRef;
 
-import item.Patent;
-import item.Patents;
+import org.apache.lucene.queryparser.classic.ParseException;
+
+import core.dbmodel.MakeInstrumentationUtil;
+import core.dbmodel.Patent;
+import core.dbmodel.Patents;
+import core.similarity.PatentMatrixGenerator;
+import core.similarity.Similarity;
+
 import tools.data.DBManager;
 import tools.evaluation.AUC;
 import tools.evaluation.PRCurve;
 import tools.model.Lucene;
 import tools.model.Lucene.WeightType;
 import tools.measure.MoehrleNovelty;
-import tools.sim.PatentMatrixGenerator;
-import tools.sim.Similarity;
-import util.MakeInstrumentationUtil;
 
 public class LSA implements Similarity {
 
@@ -70,7 +59,8 @@ public class LSA implements Similarity {
     RealVector v1 = N.getRowVector(docMap.get(id1));
     RealVector v2 = N.getRowVector(docMap.get(id2));
     double value = v1.cosine(v2);
-    System.out.println("cosine-sim between " + id1 + " and " + id2 + " : " + value);
+    // System.out.println("cosine-sim between " + id1 + " and " + id2 + " : " +
+    // value);
     return value;
   }
 
@@ -81,21 +71,29 @@ public class LSA implements Similarity {
 
   public static void main(String[] args) throws Exception {
 
-    MakeInstrumentationUtil.make();
+    // MakeInstrumentationUtil.make();
     DBManager mgr = DBManager.getInstance();
     mgr.open();
 
-    Patents dataset = new Patents("dataset1", "data/dataset-7a.txt", "data/dataset-7a-answer.txt");
-    LSA lsa = new LSA(new Lucene(dataset, WeightType.TFIDF));
-    lsa.doSVD(32);
+    int[] set = { 1, 2, 3, 4, 5 };
+    int[] dimSet = { 30, 25, 20, 15, 10, 5 };
+    for (int i = 0; i < set.length; i++) {
+      int num = set[i];
+      for (int j = 0; j < dimSet.length; j++) {
+        int dim = dimSet[j];
+        Patents dataset = new Patents("dataset" + num, "data/dataset-" + num + ".txt", "data/dataset-" + num + "-answer.txt");
+        LSA lsa = new LSA(new Lucene(dataset, WeightType.TFIDF));
+        System.out.println("==========");
+        System.out.println("model = lsa, dataset = " + dataset.getName() + ", k = " + dim);
+        lsa.doSVD(dim);
+        PatentMatrixGenerator.setSimilarity(lsa);
+        PatentMatrixGenerator.generate(dataset);
+        MoehrleNovelty.getRanking(dataset);
+        //PRCurve.evaluate(dataset);
+        AUC.evaluate(dataset);
+      }
+    }
 
-    PatentMatrixGenerator.setSimilarity(lsa);
-    PatentMatrixGenerator.generate(dataset);
-    MoehrleNovelty.getRanking(dataset);
-    System.out.println(dataset.loadRank());
-    PRCurve.evaluate(dataset);
-    AUC.evaluate(dataset);
-  
     mgr.close();
   }
 }

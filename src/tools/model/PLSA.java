@@ -8,8 +8,6 @@ package tools.model;
 //Found and tested by Andrew Polar. 
 //My version can be found on semanticsearchart.com or ezcodesample.com
 
-import item.Patent;
-import item.Patents;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,13 +34,16 @@ import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.BytesRef;
 
+import core.dbmodel.Patent;
+import core.dbmodel.Patents;
+import core.similarity.PatentMatrixGenerator;
+import core.similarity.Similarity;
+
 import tools.data.DBManager;
 import tools.evaluation.AUC;
 import tools.evaluation.PRCurve;
 import tools.measure.MoehrleNovelty;
 import tools.model.Lucene.WeightType;
-import tools.sim.PatentMatrixGenerator;
-import tools.sim.Similarity;
 
 public class PLSA implements Similarity {
   private int I = -1; // number of data
@@ -108,7 +109,7 @@ public class PLSA implements Similarity {
       }
 
       L = calcLoglikelihood(Pz, Pd_z, Pw_z);
-      System.out.println("[" + it + "]" + "\tlikelihood: " + L);
+      //System.out.println("[" + it + "]" + "\tlikelihood: " + L);
     }
 
     // print result
@@ -120,9 +121,9 @@ public class PLSA implements Similarity {
       if (norm <= 0.0)
         norm = 1.0;
       for (int k = 0; k < this.K; k++) {
-        System.out.format("%10.4f", Pd_z[k][i] / norm);
+        //System.out.format("%10.4f", Pd_z[k][i] / norm);
       }
-      System.out.println();
+      //System.out.println();
     }
 
     RealMatrix matrix = new Array2DRowRealMatrix(Pd_z);
@@ -270,20 +271,29 @@ public class PLSA implements Similarity {
   public static void main(String[] args) throws Exception {
     DBManager mgr = DBManager.getInstance();
     mgr.open();
-    Patents dataset = new Patents("dataset1", "data/dataset-5a.txt", "data/dataset-5a-answer.txt");
-    PLSA plsa = new PLSA(new Lucene(dataset, WeightType.TF));
-    plsa.doPLSA(32, 60, 10);
-    System.out.println("end PLSA");
-    PatentMatrixGenerator.setSimilarity(plsa);
-    double d0 = System.currentTimeMillis();
-    PatentMatrixGenerator.generate(dataset);
-    double d1 = System.currentTimeMillis();
-  
-    MoehrleNovelty.getRanking(dataset);
 
-    PRCurve.evaluate(dataset);
-    AUC.evaluate(dataset);
-    System.out.println("total time : " + (d1 - d0) + "ms");
+    int[] set = { 1, 2, 3, 4, 5 };
+    //int[] set = { 1 };
+    int[] topicSet = { 30, 25, 20, 15, 10, 5 };
+    //int[] topicSet = { 30};
+    for (int i = 0; i < set.length; i++) {
+      int num = set[i];
+      for (int j = 0; j < topicSet.length; j++) {
+        int topic = topicSet[j];
+        Patents dataset = new Patents("dataset" + num, "data/dataset-" + num + ".txt", "data/dataset-" + num + "-answer.txt");
+        PLSA plsa = new PLSA(new Lucene(dataset, WeightType.TF));
+        System.out.println("==========");
+        System.out.println("model = plsa, dataset = " + dataset.getName() + ", topic = " + topic);
+        plsa.doPLSA(topic, 60, 20);
+        PatentMatrixGenerator.setSimilarity(plsa);
+        PatentMatrixGenerator.generate(dataset);
+        MoehrleNovelty.getRanking(dataset);
+        //PRCurve.evaluate(dataset);
+        AUC.evaluate(dataset);
+      }
+    }
+    
+
     mgr.close();
   }
 
@@ -293,7 +303,8 @@ public class PLSA implements Similarity {
     RealVector v1 = matrix.getRowVector(docMap.get(id1));
     RealVector v2 = matrix.getRowVector(docMap.get(id2));
     double value = v1.cosine(v2);
-    System.out.println("cosine-sim between " + id1 + " and " + id2 + " : " + value);
+    // System.out.println("cosine-sim between " + id1 + " and " + id2 + " : " +
+    // value);
     return value;
   }
 

@@ -1,6 +1,5 @@
 package tools.lucene;
 
-import item.PatentFullText;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,9 +37,11 @@ import org.apache.lucene.util.Version;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.Paginator;
 
+import core.dbmodel.MakeInstrumentationUtil;
+import core.dbmodel.PatentFullText;
+import core.similarity.WNSimilarity;
+
 import tools.data.DBManager;
-import tools.sim.WNSimilarity;
-import util.MakeInstrumentationUtil;
 
 public class LuceneUtil {
   private static LuceneUtil instance = null;

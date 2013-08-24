@@ -32,8 +32,9 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
 
-import item.Patent;
-import item.SAO;
+import core.dbmodel.Patent;
+import core.dbmodel.SAO;
+
 
 public class TFIDFRanker {
 	private static TFIDFRanker instance = null;

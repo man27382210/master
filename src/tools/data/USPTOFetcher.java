@@ -1,6 +1,5 @@
 package tools.data;
 
-import item.Patent;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -14,6 +13,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import core.dbmodel.Patent;
 
 public class USPTOFetcher {
   public static int count = 0;

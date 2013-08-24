@@ -1,6 +1,5 @@
 package tools.data;
 
-import item.Patent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +13,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import util.MakeInstrumentationUtil;
+import core.dbmodel.MakeInstrumentationUtil;
+import core.dbmodel.Patent;
+
 
 public class GoogleCrawler {
 	private static GoogleCrawler instance = null;

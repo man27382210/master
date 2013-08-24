@@ -1,7 +1,5 @@
 package tools.data;
 
-import item.Patent;
-import item.SAO;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -9,6 +7,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import core.dbmodel.Patent;
+import core.dbmodel.SAO;
 
 public class DataSetLoader {
 

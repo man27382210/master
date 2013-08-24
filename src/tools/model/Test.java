@@ -3,14 +3,15 @@ package tools.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import item.Patents;
+import core.dbmodel.Patents;
+import core.similarity.PatentMatrixGenerator;
+import core.similarity.Similarity;
+
 import tools.data.DBManager;
 import tools.evaluation.AUC;
 import tools.evaluation.PRCurve;
 import tools.measure.MoehrleNovelty;
 import tools.model.Lucene.WeightType;
-import tools.sim.PatentMatrixGenerator;
-import tools.sim.Similarity;
 
 public class Test {
   public static void main(String[] args) throws Exception {

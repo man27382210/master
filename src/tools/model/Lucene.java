@@ -1,7 +1,5 @@
 package tools.model;
 
-import item.Patent;
-import item.Patents;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -50,6 +48,9 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
+
+import core.dbmodel.Patent;
+import core.dbmodel.Patents;
 
 import tools.data.DBManager;
 
@@ -118,7 +119,7 @@ public class Lucene {
       termMap.put(term.utf8ToString(), pos);
       int docFreq = termsEnum.docFreq();
       long ttf = termsEnum.totalTermFreq();
-      System.out.println(term.utf8ToString() + " " + pos + " " + ttf);
+      //System.out.println(term.utf8ToString() + " " + pos + " " + ttf);
       double idf = Math.log((double) N / (double) (docFreq + 1));
 
       if (docFreq > minDocs && ttf > minTTF) {

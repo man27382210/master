@@ -1,6 +1,5 @@
 package tools.data;
 
-import item.Patent;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -13,6 +12,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import core.dbmodel.Patent;
 
 public class PatentFetcher {
 

@@ -1,7 +1,5 @@
 package tools.measure;
 
-import item.Patent;
-import item.SAO;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import core.dbmodel.Patent;
+import core.dbmodel.SAO;
+
 import tools.evaluation.AUC;
 import tools.evaluation.PRCurve;
 
@@ -23,7 +24,7 @@ public class MoehrleNovelty {
 		List<String> expect = new ArrayList<String>();
 		for (Patent p : patentList) {
 			 double d = getNovelty(p);
-			 System.out.println(p.getId() + ":" + d);
+			 //System.out.println(p.getId() + ":" + d);
 		}
 		
 		Collections.sort(patentList, new NoveltyComparator());

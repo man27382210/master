@@ -1,7 +1,5 @@
 package tools.model;
 
-import item.Patent;
-import item.Patents;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,14 +8,18 @@ import java.util.Map;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.lucene.queryparser.classic.ParseException;
+
+import core.dbmodel.MakeInstrumentationUtil;
+import core.dbmodel.Patent;
+import core.dbmodel.Patents;
+import core.similarity.PatentMatrixGenerator;
+import core.similarity.Similarity;
 import tools.data.DBManager;
 import tools.evaluation.AUC;
 import tools.evaluation.PRCurve;
 import tools.model.Lucene;
 import tools.model.Lucene.WeightType;
 import tools.measure.MoehrleNovelty;
-import tools.sim.PatentMatrixGenerator;
-import tools.sim.Similarity;
 
 public class VSM implements Similarity {
   private RealMatrix N;
@@ -34,17 +36,17 @@ public class VSM implements Similarity {
     RealVector v1 = N.getRowVector(docMap.get(id1));
     RealVector v2 = N.getRowVector(docMap.get(id2));
     double value = v1.cosine(v2);
-    System.out.println("cosine-sim between " + id1 + " and " + id2 + " : " + value);
+    System.out.println("sim between " + id1 + " and " + id2 + " : " + value);
     return value;
   }
 
   public static void main(String[] args) throws Exception {
 
-    // MakeInstrumentationUtil.make();
+    MakeInstrumentationUtil.make();
     DBManager mgr = DBManager.getInstance();
     mgr.open();
 
-    Patents dataset = new Patents("dataset1", "data/dataset-7a.txt", "data/dataset-7a-answer.txt");
+    Patents dataset = new Patents("dataset1", "data/dataset-5.txt", "data/dataset-5-answer.txt");
     Lucene nlp = new Lucene(dataset,  WeightType.TFIDF);
     VSM vsm = new VSM(nlp);
     PatentMatrixGenerator.setSimilarity(vsm);

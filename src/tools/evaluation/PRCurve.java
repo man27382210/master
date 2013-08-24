@@ -1,8 +1,5 @@
 package tools.evaluation;
 
-import item.PatentMap;
-import item.Patent;
-import item.Patents;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -14,8 +11,12 @@ import java.util.List;
 
 import org.javalite.activejdbc.Model;
 
+import core.dbmodel.MakeInstrumentationUtil;
+import core.dbmodel.Patent;
+import core.dbmodel.PatentMap;
+import core.dbmodel.Patents;
+
 import tools.data.DBManager;
-import util.MakeInstrumentationUtil;
 
 public class PRCurve {
 

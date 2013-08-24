@@ -1,7 +1,5 @@
 package tools.data;
 
-import item.Patent;
-import item.SAO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,11 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import main.SAOExtractor;
 
 import org.javalite.activejdbc.Base;
 
-import util.MakeInstrumentationUtil;
+import core.dbmodel.MakeInstrumentationUtil;
+import core.dbmodel.Patent;
+import core.dbmodel.SAO;
+import core.model.sao.SAOExtractor;
+
 
 public class DBManager {
 	private static DBManager instance;
